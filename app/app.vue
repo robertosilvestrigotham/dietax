@@ -1,4 +1,6 @@
 <template>
+  <!-- Injects <link rel="manifest"> (needed to install the PWA) -->
+  <NuxtPwaManifest />
   <div class="min-h-screen flex flex-col md:flex-row bg-[#e5ede2] dark:bg-[#0c1610] text-[#1f2421] dark:text-[#eef1ef] transition-colors">
     <!-- Desktop Sidebar -->
     <Sidebar />
