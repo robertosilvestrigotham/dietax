@@ -1,0 +1,267 @@
+<template>
+  <div v-if="isOpen" class="ui-modal-backdrop" @click.self="close">
+    <div class="ui-modal sm:max-w-2xl">
+      <!-- Header -->
+      <div class="px-5 pt-5 pb-3 flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <h3 class="text-lg font-bold text-[#1f2421] dark:text-white truncate">
+            {{ MEAL_SLOT_LABELS[formMeal.slot] }}
+          </h3>
+          <p class="ui-muted capitalize">{{ DAY_OF_WEEK_LABELS[dayOfWeek] }}</p>
+        </div>
+        <button type="button" @click="close" class="ui-icon-btn flex-shrink-0" aria-label="Chiudi">
+          <X class="w-4 h-4" weight="bold" />
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="flex-1 overflow-y-auto px-5 pb-5 space-y-3">
+        <!-- Main fields -->
+        <div class="ui-card space-y-3">
+          <div>
+            <label class="ui-label">Descrizione</label>
+            <textarea
+              v-model="formMeal.description"
+              rows="2"
+              class="ui-input resize-none"
+              placeholder="Es. 90 g pasta integrale, 150 g ceci cotti"
+            ></textarea>
+          </div>
+          <div>
+            <label class="ui-label">Note di preparazione</label>
+            <input
+              type="text"
+              v-model="formMeal.notes"
+              placeholder="Es. Pasta pesata a secco"
+              class="ui-input"
+            />
+          </div>
+          <div>
+            <label class="ui-label">Nome</label>
+            <input type="text" v-model="formMeal.name" class="ui-input" />
+          </div>
+        </div>
+
+        <!-- Out of home -->
+        <div class="ui-card space-y-3">
+          <label class="flex items-center justify-between gap-3 cursor-pointer">
+            <div>
+              <span class="text-sm font-semibold text-[#1f2421] dark:text-white block">Fuori casa</span>
+              <span class="ui-muted">Gli ingredienti non vanno nella spesa.</span>
+            </div>
+            <span class="relative inline-flex items-center flex-shrink-0">
+              <input type="checkbox" v-model="formMeal.isOut" class="sr-only peer" />
+              <span
+                class="w-11 h-6 rounded-full bg-[#d6dfd1] dark:bg-[#2c342e] peer-checked:bg-[#8cc63f] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
+              ></span>
+            </span>
+          </label>
+          <div v-if="formMeal.isOut">
+            <label class="ui-label">CHO stimati (g)</label>
+            <input type="number" v-model.number="formMeal.estimatedCho" placeholder="Es. 60" class="ui-input" />
+          </div>
+        </div>
+
+        <!-- Ingredients -->
+        <div v-if="!formMeal.isOut" class="ui-card space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="ui-title">
+              Ingredienti <span class="text-[#8a918c] font-medium tabular-nums">{{ formMeal.ingredients.length }}</span>
+            </h4>
+            <button type="button" @click="addIngredient" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+              <Plus class="w-3.5 h-3.5" weight="bold" />
+              Aggiungi
+            </button>
+          </div>
+
+          <p v-if="formMeal.ingredients.length === 0" class="ui-muted text-center py-4">
+            Nessun ingrediente.
+          </p>
+
+          <div
+            v-for="(ing, idx) in formMeal.ingredients"
+            :key="ing.id"
+            class="ui-panel p-3 space-y-2"
+          >
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                v-model="ing.name"
+                placeholder="Alimento"
+                class="ui-input bg-white dark:bg-[#1b211d] font-medium"
+              />
+              <button
+                type="button"
+                @click="removeIngredient(idx)"
+                class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[#9aa19c] hover:text-rose-600 hover:bg-white dark:hover:bg-[#1b211d] transition"
+                title="Elimina ingrediente"
+              >
+                <Trash2 class="w-4 h-4" />
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="ui-label">Quantità</label>
+                <input
+                  type="number"
+                  v-model.number="ing.quantity"
+                  :disabled="ing.isToDefine"
+                  placeholder="90"
+                  class="ui-input bg-white dark:bg-[#1b211d] text-xs"
+                />
+              </div>
+              <div>
+                <label class="ui-label">Unità</label>
+                <select v-model="ing.unit" class="ui-input bg-white dark:bg-[#1b211d] text-xs">
+                  <option value="g">g</option>
+                  <option value="ml">ml</option>
+                  <option value="pz">pz</option>
+                  <option value="qb">q.b.</option>
+                </select>
+              </div>
+              <div>
+                <label class="ui-label text-[#5f8a3a] dark:text-[#a7c49a]">CHO (g)</label>
+                <input
+                  type="number"
+                  v-model.number="ing.choGrams"
+                  placeholder="65"
+                  class="ui-input bg-white dark:bg-[#1b211d] text-xs font-semibold"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="ui-label">Categoria</label>
+                <select v-model="ing.category" class="ui-input bg-white dark:bg-[#1b211d] text-xs">
+                  <option v-for="cat in INGREDIENT_CATEGORY_ORDER" :key="cat" :value="cat">
+                    {{ INGREDIENT_CATEGORY_LABELS[cat] }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="ui-label">Stato</label>
+                <select v-model="ing.preparationState" class="ui-input bg-white dark:bg-[#1b211d] text-xs">
+                  <option value="none">—</option>
+                  <option value="raw">A secco / crudo</option>
+                  <option value="cooked">Cotto e scolato</option>
+                  <option value="canned">Al naturale</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="inline-flex items-center gap-2 text-xs text-[#8a918c] dark:text-[#8e9790] cursor-pointer">
+              <input
+                type="checkbox"
+                v-model="ing.isToDefine"
+                @change="handleToDefineChange(ing)"
+                class="rounded border-[#c8d3c2] text-[#8cc63f] focus:ring-[#8cc63f]"
+              />
+              Quantità a piacere
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex items-center justify-end gap-2 border-t border-black/5 dark:border-white/5">
+        <button type="button" @click="close" class="ui-btn-ghost">Annulla</button>
+        <button type="button" @click="save" class="ui-btn-primary">Salva</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { PhX as X, PhPlus as Plus, PhTrash as Trash2 } from '@phosphor-icons/vue'
+import type { DayOfWeek, Ingredient, Meal } from '~/types/meal'
+import {
+  MEAL_SLOT_LABELS,
+  DAY_OF_WEEK_LABELS,
+  INGREDIENT_CATEGORY_LABELS,
+  INGREDIENT_CATEGORY_ORDER,
+} from '~/types/meal'
+import { useMealStore } from '~/stores/mealStore'
+
+const props = defineProps<{
+  isOpen: boolean
+  meal: Meal | null
+  dayOfWeek: DayOfWeek
+}>()
+
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'saved'): void
+}>()
+
+const mealStore = useMealStore()
+
+const formMeal = ref<Meal>({
+  id: '',
+  slot: 'lunch',
+  name: '',
+  description: '',
+  isOut: false,
+  ingredients: [],
+  imageUrl: '',
+  estimatedCho: undefined,
+})
+
+watch(
+  () => props.meal,
+  (val) => {
+    if (val) {
+      formMeal.value = JSON.parse(JSON.stringify(val))
+    }
+  },
+  { immediate: true }
+)
+
+const handleToDefineChange = (ing: Ingredient) => {
+  if (ing.isToDefine) {
+    ing.quantity = null
+    ing.unit = 'qb'
+  }
+}
+
+const addIngredient = () => {
+  const newIng: Ingredient = {
+    id: `ing-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    canonicalId: `custom-${Date.now()}`,
+    name: '',
+    quantity: 100,
+    unit: 'g',
+    category: 'carb',
+    preparationState: 'none',
+    choGrams: 0,
+  }
+  formMeal.value.ingredients.push(newIng)
+}
+
+const removeIngredient = (idx: number) => {
+  formMeal.value.ingredients.splice(idx, 1)
+}
+
+const close = () => {
+  emit('close')
+}
+
+const save = () => {
+  for (const ing of formMeal.value.ingredients) {
+    if (!ing.canonicalId || ing.canonicalId.startsWith('custom-')) {
+      const slug = ing.name
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+      ing.canonicalId = slug || `item-${Date.now()}`
+    }
+  }
+
+  mealStore.updateMeal(props.dayOfWeek, formMeal.value.slot, formMeal.value)
+  emit('saved')
+  close()
+}
+</script>

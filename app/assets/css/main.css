@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-[#e5ede2] text-[#1f2421] dark:bg-[#0c1610] dark:text-[#eef1ef] antialiased min-h-screen selection:bg-[#8cc63f]/30;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Shared UI primitives (same look as the "Oggi" view) */
+@layer components {
+  .ui-card {
+    @apply rounded-3xl p-5 bg-white dark:bg-[#1b211d];
+  }
+
+  .ui-panel {
+    @apply rounded-2xl bg-[#f1f4ef] dark:bg-[#18221b];
+  }
+
+  .ui-title {
+    @apply text-base font-bold text-[#1f2421] dark:text-white;
+  }
+
+  .ui-muted {
+    @apply text-xs text-[#8a918c] dark:text-[#8e9790];
+  }
+
+  .ui-label {
+    @apply block text-xs font-medium text-[#8a918c] dark:text-[#8e9790] mb-1;
+  }
+
+  .ui-input {
+    @apply w-full text-sm px-3.5 py-2.5 rounded-xl border-0 bg-[#f1f4ef] dark:bg-[#18221b] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#8cc63f] disabled:opacity-50;
+  }
+
+  .ui-btn {
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#1b211d] text-[#1f2421] dark:text-[#eef1ef] hover:bg-[#f1f4ef] dark:hover:bg-[#232a25] transition active:scale-[0.98];
+  }
+
+  .ui-btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-semibold bg-[#8cc63f] hover:bg-[#7db536] text-white transition active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .ui-btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-[#4a524c] dark:text-[#c9d1cb] hover:bg-black/5 dark:hover:bg-white/5 transition;
+  }
+
+  .ui-icon-btn {
+    @apply w-9 h-9 rounded-full flex items-center justify-center bg-white dark:bg-[#1b211d] text-[#4a524c] dark:text-[#c9d1cb] hover:bg-[#f1f4ef] dark:hover:bg-[#232a25] transition active:scale-95;
+  }
+
+  .ui-chip {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition bg-white dark:bg-[#1b211d] text-[#4a524c] dark:text-[#c9d1cb] hover:bg-[#f1f4ef] dark:hover:bg-[#232a25];
+  }
+
+  .ui-chip-on {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition bg-[#1f2421] text-white dark:bg-white dark:text-[#1f2421];
+  }
+
+  .ui-segment {
+    @apply inline-flex p-1 rounded-full bg-white/70 dark:bg-[#1b211d];
+  }
+
+  .ui-segment-item {
+    @apply px-4 py-1.5 rounded-full text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8cc63f]/50 text-[#8a918c] dark:text-[#8e9790] hover:text-[#1f2421] dark:hover:text-white;
+  }
+
+  .ui-segment-item-on {
+    @apply px-4 py-1.5 rounded-full text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8cc63f]/50 bg-[#8cc63f] text-white;
+  }
+
+  .ui-modal-backdrop {
+    @apply fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-[#1f2421]/40 backdrop-blur-sm;
+  }
+
+  .ui-modal {
+    @apply w-full bg-[#e5ede2] dark:bg-[#0c1610] rounded-t-[28px] sm:rounded-[28px] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden;
+  }
+}
+
+/* Custom scrollbar matching macOS */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 145, 0.35);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 140, 145, 0.6);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Print optimizations */
+@media print {
+  aside,
+  header,
+  nav,
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .page-break {
+    page-break-inside: avoid;
+  }
+}

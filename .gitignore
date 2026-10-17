@@ -1,0 +1,17 @@
+# Nuxt & build outputs
+.output
+.nuxt
+dist
+node_modules
+.pnpm-store
+
+# Logs & temp
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Test & coverage
+coverage
+.vitest-cache
