@@ -6,7 +6,7 @@
       <div class="ui-muted">Ora</div>
       <div class="text-2xl font-bold tabular-nums text-[#8a918c]">{{ average.before }}</div>
     </div>
-    <ArrowRight class="w-5 h-5 text-[#8fb57a]" weight="bold" />
+    <ArrowRight class="w-5 h-5 text-[#9fb83f]" weight="bold" />
     <div>
       <div class="ui-muted">Dopo</div>
       <div class="text-2xl font-bold tabular-nums text-[#1f2421] dark:text-white">{{ average.after }}</div>
@@ -22,7 +22,7 @@
       :disabled="day.changes.length === 0"
       @click="toggle(day.dayOfWeek)"
     >
-      <span class="w-10 text-xs font-semibold uppercase text-[#8a918c] dark:text-[#8e9790]">{{ DAY_OF_WEEK_SHORT[day.dayOfWeek] }}</span>
+      <span class="w-10 text-xs font-semibold uppercase text-[#8a918c] dark:text-[#8e8f94]">{{ DAY_OF_WEEK_SHORT[day.dayOfWeek] }}</span>
       <span class="flex-1 min-w-0 text-sm tabular-nums">
         <span class="text-[#8a918c]">{{ day.beforeKcal }}</span>
         <span class="mx-1 text-[#c3c8c4]">→</span>
@@ -52,7 +52,7 @@
         </span>
         <span class="tabular-nums flex-shrink-0">
           <span class="text-[#8a918c] line-through">{{ change.from }}</span>
-          <span class="ml-1.5 font-semibold" :class="change.to < change.from ? 'text-[#5f8a3a] dark:text-[#a7c49a]' : 'text-[#9a5d1c] dark:text-[#f2b36b]'">
+          <span class="ml-1.5 font-semibold" :class="change.to < change.from ? 'text-[#5f8a3a] dark:text-[#d4f65a]' : 'text-[#9a5d1c] dark:text-[#f2b36b]'">
             {{ change.to }} {{ change.unit }}
           </span>
         </span>
@@ -60,7 +60,7 @@
     </ul>
   </div>
 
-  <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6f7872]">
+  <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6b6c71]">
     Verdure, ingredienti q.b., frutta a pezzi e pasti fuori casa non cambiano. I pasti già confermati restano com'erano.
     Puoi annullare da Opzioni.
   </p>

@@ -26,15 +26,14 @@ export default defineNuxtConfig({
   app: {
     baseURL: base,
     head: {
-      htmlAttrs: { lang: 'it' },
+      htmlAttrs: { lang: 'it', class: 'dark' },
       title: 'DietaX',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: 'Pasti del giorno, carboidrati e lista della spesa' },
-        // Status/toolbar color follows the app background in light and dark mode
-        { name: 'theme-color', content: '#e5ede2', media: '(prefers-color-scheme: light)' },
-        { name: 'theme-color', content: '#0c1610', media: '(prefers-color-scheme: dark)' },
+        // Dark-only app: status/toolbar color matches the background
+        { name: 'theme-color', content: '#131416' },
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
@@ -64,8 +63,8 @@ export default defineNuxtConfig({
       scope: base,
       display: 'standalone',
       orientation: 'portrait',
-      theme_color: '#e5ede2',
-      background_color: '#e5ede2',
+      theme_color: '#131416',
+      background_color: '#131416',
       categories: ['health', 'food', 'lifestyle'],
       icons: [
         { src: withBase('pwa-64x64.png'), sizes: '64x64', type: 'image/png' },

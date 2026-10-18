@@ -30,7 +30,7 @@
         <button
           type="button"
           @click="isManualModalOpen = true"
-          class="w-9 h-9 rounded-full flex items-center justify-center bg-[#8cc63f] hover:bg-[#7db536] text-white transition active:scale-95"
+          class="w-9 h-9 rounded-full flex items-center justify-center bg-[#d4f65a] hover:bg-[#c2e646] text-[#16171a] transition active:scale-95"
           title="Aggiungi prodotto"
           aria-label="Aggiungi prodotto"
         >
@@ -43,11 +43,11 @@
     <div class="grid grid-cols-2 gap-2 no-print">
       <label>
         <span class="ui-label">Dal</span>
-        <input type="date" v-model="startDateKey" class="ui-input bg-white dark:bg-[#1b211d] text-xs" />
+        <input type="date" v-model="startDateKey" class="ui-input bg-white dark:bg-[#222326] text-xs" />
       </label>
       <label>
         <span class="ui-label">Al</span>
-        <input type="date" v-model="endDateKey" class="ui-input bg-white dark:bg-[#1b211d] text-xs" />
+        <input type="date" v-model="endDateKey" class="ui-input bg-white dark:bg-[#222326] text-xs" />
       </label>
     </div>
 
@@ -113,7 +113,7 @@
     >
       <div class="flex items-center justify-between pb-1">
         <h2 class="ui-title">{{ group.label }}</h2>
-        <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790]">{{ group.items.length }}</span>
+        <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e8f94]">{{ group.items.length }}</span>
       </div>
       <GroceryItemRow
         v-for="item in group.items"
@@ -128,7 +128,7 @@
     <div v-if="filteredManualItems.length > 0" class="ui-card space-y-2 page-break">
       <div class="flex items-center justify-between pb-1">
         <h2 class="ui-title">Aggiunti a mano</h2>
-        <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790]">{{ filteredManualItems.length }}</span>
+        <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e8f94]">{{ filteredManualItems.length }}</span>
       </div>
       <GroceryItemRow
         v-for="item in filteredManualItems"
@@ -146,7 +146,7 @@
       v-if="filteredGroupedItems.length === 0 && filteredManualItems.length === 0"
       class="ui-card py-12 text-center"
     >
-      <ShoppingBag class="w-12 h-12 text-[#a3bb97] mx-auto mb-3" />
+      <ShoppingBag class="w-12 h-12 text-[#9fb83f] mx-auto mb-3" />
       <h3 class="ui-title">Niente da mostrare</h3>
       <p class="ui-muted max-w-xs mx-auto mt-1">
         Nessun prodotto corrisponde ai filtri scelti per queste date.

@@ -3,18 +3,18 @@
   <div v-if="!isPastDay || notesModel" class="ui-card space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <NotePencil class="w-5 h-5 text-[#8fb57a] dark:text-[#a7c49a]" />
+        <NotePencil class="w-5 h-5 text-[#9fb83f] dark:text-[#d4f65a]" />
         <label :for="`notes-${dateKey}`" class="ui-title">Nota del giorno</label>
       </div>
       <span
         v-if="notesSavedFeedback"
-        class="text-xs text-[#5f8a3a] dark:text-[#a7c49a] font-semibold flex items-center gap-1"
+        class="text-xs text-[#5f8a3a] dark:text-[#d4f65a] font-semibold flex items-center gap-1"
       >
         <Check class="w-3.5 h-3.5" weight="bold" />
         Salvato
       </span>
     </div>
-    <p v-if="isPastDay" class="text-sm text-[#1f2421] dark:text-[#eef1ef] whitespace-pre-line">{{ notesModel }}</p>
+    <p v-if="isPastDay" class="text-sm text-[#1f2421] dark:text-[#f4f4f5] whitespace-pre-line">{{ notesModel }}</p>
     <textarea
       v-else
       :id="`notes-${dateKey}`"

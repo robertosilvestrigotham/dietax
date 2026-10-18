@@ -4,7 +4,7 @@
     <section class="ui-card space-y-3">
       <div class="flex items-center justify-between gap-3">
         <h2 class="ui-title">Profilo</h2>
-        <button v-if="mealStore.profile" type="button" @click="openOnboarding" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+        <button v-if="mealStore.profile" type="button" @click="openOnboarding" class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]">
           Modifica
         </button>
       </div>
@@ -14,7 +14,7 @@
           <div v-for="tile in profileTiles" :key="tile.label" class="ui-panel p-3">
             <component :is="tile.icon" class="w-5 h-5" :class="tile.iconClass" />
             <div class="mt-1.5 text-lg font-bold tabular-nums text-[#1f2421] dark:text-white leading-tight">{{ tile.value }}</div>
-            <div class="text-[11px] text-[#8a918c] dark:text-[#8e9790] truncate">{{ tile.label }}</div>
+            <div class="text-[11px] text-[#8a918c] dark:text-[#8e8f94] truncate">{{ tile.label }}</div>
           </div>
         </div>
 
@@ -33,14 +33,14 @@
         </p>
 
         <!-- Measurement history (latest first) -->
-        <ul class="divide-y divide-[#eef1ec] dark:divide-[#232a25]">
+        <ul class="divide-y divide-[#eef1ec] dark:divide-[#34353a]">
           <li
             v-for="(m, i) in measurementHistory"
             :key="m.date"
             class="py-2 flex items-center justify-between gap-3 text-xs tabular-nums"
           >
-            <span class="text-[#8a918c] dark:text-[#8e9790] w-20 flex-shrink-0">{{ formatDay(m.date) }}</span>
-            <span class="flex-1 text-[#4a524c] dark:text-[#c9d1cb] truncate">
+            <span class="text-[#8a918c] dark:text-[#8e8f94] w-20 flex-shrink-0">{{ formatDay(m.date) }}</span>
+            <span class="flex-1 text-[#4a524c] dark:text-[#c8c9cd] truncate">
               <template v-if="m.waistCm">vita {{ m.waistCm }}</template>
               <template v-if="m.hipsCm"> · fianchi {{ m.hipsCm }}</template>
             </span>
@@ -48,7 +48,7 @@
             <span
               v-if="measurementHistory[i + 1]"
               class="w-12 text-right"
-              :class="m.weightKg <= measurementHistory[i + 1]!.weightKg ? 'text-[#5f8a3a] dark:text-[#a7c49a]' : 'text-[#c07a2c]'"
+              :class="m.weightKg <= measurementHistory[i + 1]!.weightKg ? 'text-[#5f8a3a] dark:text-[#d4f65a]' : 'text-[#c07a2c]'"
             >
               {{ formatDelta(m.weightKg - measurementHistory[i + 1]!.weightKg) }}
             </span>
@@ -61,7 +61,7 @@
             <Scales class="w-4 h-4" />
             Aggiorna misure
           </button>
-          <button type="button" @click="downloadMeasurementReminder" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+          <button type="button" @click="downloadMeasurementReminder" class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]">
             <CalendarPlus class="w-4 h-4" />
             Promemoria nel calendario
           </button>
@@ -99,14 +99,14 @@
           :placeholder="String(todayPlannedKcal)"
           class="ui-input max-w-[10rem] font-semibold"
         />
-        <span class="text-sm text-[#8a918c] dark:text-[#8e9790]">kcal al giorno</span>
+        <span class="text-sm text-[#8a918c] dark:text-[#8e8f94]">kcal al giorno</span>
       </div>
       <div class="flex flex-wrap gap-2">
         <button type="button" @click="openPlanScaling" class="ui-btn-primary py-2 text-xs">
           <MagicWand class="w-4 h-4" />
           Adatta il menù all'obiettivo
         </button>
-        <button type="button" @click="openMenuGenerator" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+        <button type="button" @click="openMenuGenerator" class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]">
           <ChefHat class="w-4 h-4" />
           Genera un nuovo menù
         </button>
@@ -114,7 +114,7 @@
           v-if="mealStore.planBackup"
           type="button"
           @click="mealStore.restorePlanBackup()"
-          class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]"
+          class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]"
         >
           <ArrowCounterClockwise class="w-4 h-4" />
           Ripristina menù precedente
@@ -124,32 +124,10 @@
         v-if="mealStore.profile && profileSummary && !mealStore.profile.autoKcalGoal"
         type="button"
         @click="useProfileGoal"
-        class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]"
+        class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]"
       >
         Usa l'obiettivo del profilo ({{ profileSummary.targetKcal }} kcal)
       </button>
-    </section>
-
-    <!-- Theme -->
-    <section class="ui-card space-y-3">
-      <h2 class="ui-title">Aspetto</h2>
-      <div class="grid grid-cols-3 gap-2">
-        <button
-          v-for="opt in themeOptions"
-          :key="opt.value"
-          type="button"
-          @click="setTheme(opt.value)"
-          class="flex flex-col items-center gap-1.5 py-3 rounded-2xl text-xs font-semibold transition"
-          :class="
-            theme === opt.value
-              ? 'bg-[#8cc63f] text-white'
-              : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#4a524c] dark:text-[#c9d1cb] hover:bg-[#e9eee6] dark:hover:bg-[#1d2820]'
-          "
-        >
-          <component :is="opt.icon" class="w-6 h-6" />
-          {{ opt.label }}
-        </button>
-      </div>
     </section>
 
     <!-- Backup -->
@@ -163,15 +141,15 @@
         <button
           type="button"
           @click="handleExportJSON"
-          class="ui-panel flex items-center justify-center gap-2 py-3 text-sm font-semibold text-[#1f2421] dark:text-white hover:bg-[#e9eee6] dark:hover:bg-[#1d2820] transition"
+          class="ui-panel flex items-center justify-center gap-2 py-3 text-sm font-semibold text-[#1f2421] dark:text-white hover:bg-[#e9eee6] dark:hover:bg-[#2b2c30] transition"
         >
-          <Download class="w-5 h-5 text-[#5f8a3a] dark:text-[#a7c49a]" />
+          <Download class="w-5 h-5 text-[#5f8a3a] dark:text-[#d4f65a]" />
           Esporta
         </button>
         <label
-          class="ui-panel flex items-center justify-center gap-2 py-3 text-sm font-semibold text-[#1f2421] dark:text-white hover:bg-[#e9eee6] dark:hover:bg-[#1d2820] transition cursor-pointer"
+          class="ui-panel flex items-center justify-center gap-2 py-3 text-sm font-semibold text-[#1f2421] dark:text-white hover:bg-[#e9eee6] dark:hover:bg-[#2b2c30] transition cursor-pointer"
         >
-          <Upload class="w-5 h-5 text-[#5f8a3a] dark:text-[#a7c49a]" />
+          <Upload class="w-5 h-5 text-[#5f8a3a] dark:text-[#d4f65a]" />
           Importa
           <input type="file" accept=".json,application/json" @change="handleImportJSON" class="sr-only" />
         </label>
@@ -183,7 +161,7 @@
         :class="
           feedbackIsError
             ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300'
-            : 'bg-[#eaf3dc] dark:bg-[#1f3320] text-[#4c7a22] dark:text-[#a7c49a]'
+            : 'bg-[#eaf3dc] dark:bg-[#2f3520] text-[#4c7a22] dark:text-[#d4f65a]'
         "
       >
         <AlertCircle v-if="feedbackIsError" class="w-4 h-4 flex-shrink-0" />
@@ -192,7 +170,7 @@
       </div>
 
       <p class="ui-muted leading-relaxed flex gap-2">
-        <Info class="w-4 h-4 flex-shrink-0 text-[#a3bb97]" />
+        <Info class="w-4 h-4 flex-shrink-0 text-[#9fb83f]" />
         <span>I dati restano solo su questo dispositivo. Per passarli da Mac a iPhone esporta qui e importa sull'altro.</span>
       </p>
     </section>
@@ -209,7 +187,7 @@
           :key="item.canonicalId"
           type="button"
           @click="mealStore.toggleGlobalPantry(item.canonicalId)"
-          :class="isItemInGlobalPantry(item.canonicalId) ? 'ui-chip-on' : 'ui-chip bg-[#f1f4ef] dark:bg-[#18221b]'"
+          :class="isItemInGlobalPantry(item.canonicalId) ? 'ui-chip-on' : 'ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30]'"
         >
           <Check v-if="isItemInGlobalPantry(item.canonicalId)" class="w-3.5 h-3.5" weight="bold" />
           {{ item.label }}
@@ -225,11 +203,11 @@
           <div class="text-sm font-medium text-[#1f2421] dark:text-white">Menù iniziale</div>
           <div class="ui-muted">Reimposta il piano settimanale. Lo storico resta.</div>
         </div>
-        <button type="button" @click="confirmRestoreSeed" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b] flex-shrink-0">
+        <button type="button" @click="confirmRestoreSeed" class="ui-chip bg-[#f1f4ef] dark:bg-[#2b2c30] flex-shrink-0">
           Ripristina
         </button>
       </div>
-      <div class="flex items-center justify-between gap-3 py-2 border-t border-[#eef1ec] dark:border-[#232a25]">
+      <div class="flex items-center justify-between gap-3 py-2 border-t border-[#eef1ec] dark:border-[#34353a]">
         <div class="min-w-0">
           <div class="text-sm font-medium text-[#1f2421] dark:text-white">Storico</div>
           <div class="ui-muted">Cancella pasti confermati e note.</div>
@@ -245,7 +223,7 @@
     </section>
 
     <!-- Disclaimer -->
-    <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6f7872]">
+    <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6b6c71]">
       DietaX è uno strumento di organizzazione dei pasti. Il piano è indicativo e non è una prescrizione medica o nutrizionale; non fornisce indicazioni su farmaci o insulina.
     </p>
   </div>
@@ -253,9 +231,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { PhChefHat as ChefHat, PhMagicWand as MagicWand, PhArrowCounterClockwise as ArrowCounterClockwise, PhFire as Fire, PhHeartbeat as Heartbeat, PhScales as Scales, PhCalendarPlus as CalendarPlus, PhUserCircle as UserCircle, PhSun as Sun, PhMoon as Moon, PhDeviceMobile as DeviceMobile, PhDownloadSimple as Download, PhUploadSimple as Upload, PhCheck as Check, PhWarningCircle as AlertCircle, PhInfo as Info } from '@phosphor-icons/vue'
+import { PhChefHat as ChefHat, PhMagicWand as MagicWand, PhArrowCounterClockwise as ArrowCounterClockwise, PhFire as Fire, PhHeartbeat as Heartbeat, PhScales as Scales, PhCalendarPlus as CalendarPlus, PhUserCircle as UserCircle, PhDownloadSimple as Download, PhUploadSimple as Upload, PhCheck as Check, PhWarningCircle as AlertCircle, PhInfo as Info } from '@phosphor-icons/vue'
 import { useMealStore } from '~/stores/mealStore'
-import { useTheme } from '~/composables/useTheme'
 import { formatDateKey, getDayOfWeekFromDate, parseDateKey } from '~/utils/date'
 import { calculateDayKcal } from '~/utils/nutrition'
 import BmiScale from '~/components/BmiScale.vue'
@@ -265,7 +242,6 @@ import { ACTIVITY_LEVELS, LIFESTYLES, WEIGHT_GOALS, summarizeProfile } from '~/u
 import type { AppExportData } from '~/types/meal'
 
 const mealStore = useMealStore()
-const { theme, setTheme } = useTheme()
 
 const todayPlannedKcal = computed(
   () => calculateDayKcal({ dayPlan: mealStore.getDayPlan(getDayOfWeekFromDate(new Date())) }).totalKcal
@@ -278,9 +254,9 @@ const profileTiles = computed(() => {
   const summary = profileSummary.value
   if (!summary) return []
   return [
-    { label: 'kg', value: summary.weightKg, icon: Scales, iconClass: 'text-[#8fb57a]' },
-    { label: `BMI · ${summary.bmiLabel}`, value: summary.bmi, icon: Heartbeat, iconClass: 'text-[#ab9cf0]' },
-    { label: 'kcal fabbisogno', value: summary.tdee, icon: Fire, iconClass: 'text-[#f2b36b]' },
+    { label: 'kg', value: summary.weightKg, icon: Scales, iconClass: 'text-[#9fb83f]' },
+    { label: `BMI · ${summary.bmiLabel}`, value: summary.bmi, icon: Heartbeat, iconClass: 'text-[#7d7e84]' },
+    { label: 'kcal fabbisogno', value: summary.tdee, icon: Fire, iconClass: 'text-[#ececee]' },
   ]
 })
 
@@ -311,12 +287,6 @@ const onKcalGoalChange = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
   mealStore.setKcalGoal(Number.isFinite(value) && value > 0 ? value : null)
 }
-
-const themeOptions = [
-  { value: 'light' as const, label: 'Chiaro', icon: Sun },
-  { value: 'dark' as const, label: 'Scuro', icon: Moon },
-  { value: 'system' as const, label: 'Automatico', icon: DeviceMobile },
-]
 
 const feedbackMessage = ref('')
 const feedbackIsError = ref(false)

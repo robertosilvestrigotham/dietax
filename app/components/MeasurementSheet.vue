@@ -1,24 +1,24 @@
 <template>
   <div class="ui-modal-backdrop" @click.self="closeMeasurement">
     <div class="ui-modal sm:max-w-md">
-      <div class="relative isolate overflow-hidden px-5 pt-5 pb-5 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#1b3420] dark:to-[#1f2c14]">
+      <div class="relative isolate overflow-hidden px-5 pt-5 pb-5 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#232427] dark:to-[#2c331a]">
         <ShaderBackground class="-z-10" />
         <div class="flex items-start justify-between gap-3">
           <span class="w-14 h-14 rounded-[20px] bg-white/75 dark:bg-white/10 backdrop-blur flex items-center justify-center shadow-[0_6px_20px_rgba(60,100,40,0.12)]">
-            <Scales class="w-8 h-8 text-[#5f8a3a] dark:text-[#a7c49a]" />
+            <Scales class="w-8 h-8 text-[#5f8a3a] dark:text-[#d4f65a]" />
           </span>
           <button type="button" @click="closeMeasurement" class="w-9 h-9 rounded-full flex items-center justify-center bg-white/60 dark:bg-white/10 text-[#1f2421] dark:text-white" aria-label="Chiudi">
             <X class="w-4 h-4" weight="bold" />
           </button>
         </div>
         <h3 class="mt-4 text-2xl font-bold tracking-tight text-[#1f2421] dark:text-white">Come va?</h3>
-        <p v-if="last" class="text-sm text-[#4a5a44] dark:text-[#b9cbb0]">Ultima misurazione il {{ formatDay(last.date) }}</p>
+        <p v-if="last" class="text-sm text-[#4a5a44] dark:text-[#b5b6ba]">Ultima misurazione il {{ formatDay(last.date) }}</p>
       </div>
 
       <div class="ui-modal-body px-5 pb-5 space-y-3">
         <label class="ui-card p-4 flex items-center gap-4">
           <span class="flex-1 min-w-0">
-            <span class="block text-xs text-[#8a918c] dark:text-[#8e9790]">Peso di oggi</span>
+            <span class="block text-xs text-[#8a918c] dark:text-[#8e8f94]">Peso di oggi</span>
             <span class="flex items-baseline gap-1">
               <input
                 v-model.number="weightKg"
@@ -26,7 +26,7 @@
                 inputmode="decimal"
                 step="0.1"
                 :placeholder="last ? String(last.weightKg) : '72'"
-                class="w-28 bg-transparent border-0 p-0 text-4xl font-bold text-[#1f2421] dark:text-white placeholder:text-[#d6dbd7] dark:placeholder:text-[#3a433c] focus:ring-0 focus:outline-none tabular-nums"
+                class="w-28 bg-transparent border-0 p-0 text-4xl font-bold text-[#1f2421] dark:text-white placeholder:text-[#d6dbd7] dark:placeholder:text-[#55565b] focus:ring-0 focus:outline-none tabular-nums"
               />
               <span class="text-base text-[#8a918c]">kg</span>
             </span>
@@ -34,7 +34,7 @@
           <span
             v-if="weightDelta !== null"
             class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-sm font-semibold tabular-nums"
-            :class="weightDelta <= 0 ? 'bg-[#eaf3dc] text-[#4c7a22] dark:bg-[#1f3320] dark:text-[#a7c49a]' : 'bg-[#fbeedd] text-[#9a5d1c] dark:bg-[#3a2a16] dark:text-[#f2b36b]'"
+            :class="weightDelta <= 0 ? 'bg-[#eaf3dc] text-[#4c7a22] dark:bg-[#2f3520] dark:text-[#d4f65a]' : 'bg-[#fbeedd] text-[#9a5d1c] dark:bg-[#3a2a16] dark:text-[#f2b36b]'"
           >
             <component :is="weightDelta < 0 ? TrendDown : weightDelta > 0 ? TrendUp : Equals" class="w-4 h-4" weight="bold" />
             {{ weightDelta > 0 ? '+' : '' }}{{ weightDelta }}

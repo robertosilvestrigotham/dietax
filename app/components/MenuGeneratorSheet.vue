@@ -2,18 +2,18 @@
   <div class="ui-modal-backdrop" @click.self="closeMenuGenerator">
     <div class="ui-modal sm:max-w-lg">
       <!-- Hero -->
-      <div class="relative isolate overflow-hidden px-5 pt-5 pb-5 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#1b3420] dark:to-[#1f2c14]">
+      <div class="relative isolate overflow-hidden px-5 pt-5 pb-5 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#232427] dark:to-[#2c331a]">
         <ShaderBackground class="-z-10" />
         <div class="flex items-start justify-between gap-3">
           <span class="w-14 h-14 rounded-[20px] bg-white/75 dark:bg-white/10 backdrop-blur flex items-center justify-center shadow-[0_6px_20px_rgba(60,100,40,0.12)]">
-            <ChefHat class="w-8 h-8 text-[#5f8a3a] dark:text-[#a7c49a]" />
+            <ChefHat class="w-8 h-8 text-[#5f8a3a] dark:text-[#d4f65a]" />
           </span>
           <button type="button" @click="closeMenuGenerator" class="w-9 h-9 rounded-full flex items-center justify-center bg-white/60 dark:bg-white/10 text-[#1f2421] dark:text-white" aria-label="Chiudi">
             <X class="w-4 h-4" weight="bold" />
           </button>
         </div>
         <h3 class="mt-4 text-2xl font-bold tracking-tight text-[#1f2421] dark:text-white">Nuovo menù</h3>
-        <p class="text-sm text-[#4a5a44] dark:text-[#b9cbb0]">
+        <p class="text-sm text-[#4a5a44] dark:text-[#b5b6ba]">
           Piatti nuovi ogni giorno, porzioni su <strong class="tabular-nums">{{ targetKcal }} kcal</strong>.
         </p>
       </div>
@@ -30,7 +30,7 @@
                 type="button"
                 @click="choRatio = opt.value"
                 class="py-2 rounded-xl text-xs font-semibold transition"
-                :class="choRatio === opt.value ? 'bg-[#8cc63f] text-white' : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#4a524c] dark:text-[#c9d1cb]'"
+                :class="choRatio === opt.value ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#4a524c] dark:text-[#c8c9cd]'"
               >
                 {{ opt.label }}
               </button>
@@ -45,7 +45,7 @@
             <span class="relative inline-flex items-center flex-shrink-0">
               <input v-model="trainingBonus" type="checkbox" class="sr-only peer" />
               <span
-                class="w-11 h-6 rounded-full bg-[#d6dfd1] dark:bg-[#2c342e] peer-checked:bg-[#8cc63f] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
+                class="w-11 h-6 rounded-full bg-[#d6dfd1] dark:bg-[#34353a] peer-checked:bg-[#d4f65a] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
               ></span>
             </span>
           </label>
@@ -78,7 +78,7 @@
         <div v-for="day in preview" :key="day.dayOfWeek" class="ui-card p-4">
           <div class="flex items-baseline justify-between mb-2">
             <span class="text-sm font-bold text-[#1f2421] dark:text-white capitalize">{{ DAY_OF_WEEK_LABELS[day.dayOfWeek] }}</span>
-            <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790]">
+            <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e8f94]">
               <span class="font-semibold text-[#1f2421] dark:text-white">{{ day.kcal }}</span> kcal · {{ Math.round(day.cho) }}g CHO
             </span>
           </div>
@@ -86,7 +86,7 @@
             <li v-for="row in day.rows" :key="row.slot" class="flex items-center gap-2.5">
               <span
                 class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white"
-                :class="row.locked ? 'bg-[#8fb57a]' : 'bg-[#c8d3c2] dark:bg-[#24332a]'"
+                :class="row.locked ? 'bg-[#9fb83f]' : 'bg-[#c8d3c2] dark:bg-[#3a3b40]'"
               >
                 <component :is="MEAL_SLOT_ICONS[row.slot]" class="w-3.5 h-3.5" />
               </span>
@@ -100,7 +100,7 @@
                 type="button"
                 @click="toggleLock(day.dayOfWeek, row.slot)"
                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition"
-                :class="row.locked ? 'text-[#5f8a3a] dark:text-[#a7c49a] bg-[#eaf3dc] dark:bg-[#1f3320]' : 'text-[#b6bdb8] hover:text-[#4a524c]'"
+                :class="row.locked ? 'text-[#5f8a3a] dark:text-[#d4f65a] bg-[#eaf3dc] dark:bg-[#2f3520]' : 'text-[#b6bdb8] hover:text-[#4a524c]'"
                 :aria-label="row.locked ? 'Sblocca piatto' : 'Tieni questo piatto'"
                 :title="row.locked ? 'Bloccato: resta quando rigeneri' : 'Tieni questo piatto'"
               >
@@ -110,7 +110,7 @@
           </ul>
         </div>
 
-        <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6f7872]">
+        <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6b6c71]">
           Blocca con il lucchetto i piatti che ti piacciono e rigenera gli altri. I pasti fuori casa restano. Puoi annullare da Opzioni.
         </p>
       </div>

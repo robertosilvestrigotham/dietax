@@ -18,7 +18,7 @@
         Panoramica
       </button>
     </div>
-    <button type="button" @click="openMenuGenerator" class="ui-btn bg-[#8cc63f] hover:bg-[#7db536] text-white dark:bg-[#8cc63f] dark:text-white">
+    <button type="button" @click="openMenuGenerator" class="ui-btn bg-[#d4f65a] hover:bg-[#c2e646] text-[#16171a] dark:bg-[#d4f65a] dark:text-[#16171a]">
       <ChefHat class="w-4 h-4" />
       Nuovo menù
     </button>
@@ -35,13 +35,13 @@
         class="min-w-0 py-2.5 px-1 rounded-2xl text-center transition flex flex-col items-center disabled:opacity-45 disabled:pointer-events-none"
         :class="[
           activeDayOfWeek === day.dayOfWeek
-            ? 'bg-[#8cc63f] text-white'
-            : 'bg-white dark:bg-[#1b211d] text-[#1f2421] dark:text-[#eef1ef] hover:bg-[#f3f4f3] dark:hover:bg-[#202722]',
+            ? 'bg-[#d4f65a] text-[#16171a]'
+            : 'bg-white dark:bg-[#222326] text-[#1f2421] dark:text-[#f4f4f5] hover:bg-[#f3f4f3] dark:hover:bg-[#2b2c30]',
         ]"
       >
         <span
           class="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide"
-          :class="activeDayOfWeek === day.dayOfWeek ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
+          :class="activeDayOfWeek === day.dayOfWeek ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e8f94]'"
         >
           {{ DAY_OF_WEEK_SHORT[day.dayOfWeek] }}
         </span>
@@ -50,7 +50,7 @@
         </span>
         <span
           class="text-[10px] sm:text-[11px] font-medium tabular-nums truncate max-w-full"
-          :class="activeDayOfWeek === day.dayOfWeek ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
+          :class="activeDayOfWeek === day.dayOfWeek ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e8f94]'"
         >
           {{ Math.round(getDateTotalCho(day.dateKey)) }}g
         </span>
@@ -64,8 +64,8 @@
           {{ DAY_OF_WEEK_LABELS[activeDayOfWeek] }}
         </h2>
         <span class="text-sm tabular-nums">
-          <span class="font-semibold text-[#5f8a3a] dark:text-[#a7c49a]">{{ Math.round(getDayTotalCho(activeDayOfWeek)) }}g CHO</span>
-          <span class="text-[#8a918c] dark:text-[#8e9790]"> · {{ getDayTotalKcal(activeDayOfWeek) }} kcal</span>
+          <span class="font-semibold text-[#5f8a3a] dark:text-[#d4f65a]">{{ Math.round(getDayTotalCho(activeDayOfWeek)) }}g CHO</span>
+          <span class="text-[#8a918c] dark:text-[#8e8f94]"> · {{ getDayTotalKcal(activeDayOfWeek) }} kcal</span>
         </span>
       </div>
 
@@ -93,21 +93,21 @@
           class="w-16 self-start flex-shrink-0 py-2.5 rounded-2xl flex flex-col items-center transition disabled:opacity-60 disabled:pointer-events-none"
           :class="
             day.isToday
-              ? 'bg-[#8cc63f] text-white'
-              : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#1f2421] dark:text-[#eef1ef] hover:bg-[#e9eee6] dark:hover:bg-[#1d2820]'
+              ? 'bg-[#d4f65a] text-[#16171a]'
+              : 'bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#1f2421] dark:text-[#f4f4f5] hover:bg-[#e9eee6] dark:hover:bg-[#2b2c30]'
           "
           :title="`Apri ${day.dayLabel}`"
         >
           <span
             class="text-[11px] font-semibold uppercase tracking-wide"
-            :class="day.isToday ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
+            :class="day.isToday ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e8f94]'"
           >
             {{ DAY_OF_WEEK_SHORT[day.dayOfWeek] }}
           </span>
           <span class="text-xl font-bold leading-tight tabular-nums">{{ day.dayOfMonth }}</span>
           <span
             class="text-[11px] font-medium tabular-nums"
-            :class="day.isToday ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
+            :class="day.isToday ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e8f94]'"
           >
             {{ Math.round(getDateTotalCho(day.dateKey)) }}g
           </span>
@@ -119,10 +119,10 @@
               type="button"
               @click="openEditModalForDay(day.dayOfWeek, datedPlan(day.dateKey)[slot])"
               :disabled="getSlotState(day.dateKey, day.isToday, slot) === 'done' || isPast(day.dateKey)"
-              class="w-full flex items-center gap-2.5 py-1.5 px-1.5 rounded-xl text-left hover:bg-[#f1f4ef] dark:hover:bg-[#18221b] transition disabled:pointer-events-none"
+              class="w-full flex items-center gap-2.5 py-1.5 px-1.5 rounded-xl text-left hover:bg-[#f1f4ef] dark:hover:bg-[#2b2c30] transition disabled:pointer-events-none"
             >
               <span
-                class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white dark:text-[#e8f0e4]"
+                class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                 :class="slotStateClass(getSlotState(day.dateKey, day.isToday, slot))"
               >
                 <component :is="MEAL_SLOT_ICONS[slot]" class="w-4 h-4" />
@@ -132,11 +132,11 @@
                   {{ MEAL_SLOT_LABELS[slot] }}
                   <span v-if="datedPlan(day.dateKey)[slot].isOut" class="font-medium text-amber-700 dark:text-amber-300"> · Fuori casa</span>
                 </span>
-                <span class="block text-xs text-[#8a918c] dark:text-[#8e9790] truncate">
+                <span class="block text-xs text-[#8a918c] dark:text-[#8e8f94] truncate">
                   {{ datedPlan(day.dateKey)[slot].description }}
                 </span>
               </span>
-              <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790] flex-shrink-0">
+              <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e8f94] flex-shrink-0">
                 {{ Math.round(getMealChoValue(datedPlan(day.dateKey)[slot])) }}g
               </span>
             </button>
@@ -216,9 +216,9 @@ const getSlotState = (dateKey: string, isToday: boolean, slot: MealSlot): SlotSt
 }
 
 const slotStateClass = (state: SlotState) => {
-  if (state === 'active') return 'bg-[#8cc63f]'
-  if (state === 'done') return 'bg-[#a3bb97] dark:bg-[#3a5a3c]'
-  return 'bg-[#c8d3c2] dark:bg-[#24332a]'
+  if (state === 'active') return 'bg-[#d4f65a] text-[#16171a]'
+  if (state === 'done') return 'bg-[#5c6b2a] text-[#ececee]'
+  return 'bg-[#3a3b40] text-[#ececee]'
 }
 
 const isEditModalOpen = ref(false)

@@ -12,7 +12,7 @@
         <button
           type="button"
           @click="openDay(day.dateKey)"
-          class="ui-card w-full text-left p-4 hover:bg-[#fafbf9] dark:hover:bg-[#202722] transition flex items-center gap-4"
+          class="ui-card w-full text-left p-4 hover:bg-[#fafbf9] dark:hover:bg-[#2b2c30] transition flex items-center gap-4"
         >
           <AppleActivityRings :values="day.rings" :size="44" class="flex-shrink-0" />
 
@@ -20,7 +20,7 @@
             <div class="text-sm font-semibold text-[#1f2421] dark:text-white truncate">
               {{ day.label }}
             </div>
-            <div class="text-xs mt-0.5 text-[#8a918c] dark:text-[#8e9790] tabular-nums">
+            <div class="text-xs mt-0.5 text-[#8a918c] dark:text-[#8e8f94] tabular-nums">
               {{ day.completed }}/{{ day.total }} pasti · {{ day.consumedKcal }} kcal
               <span v-if="day.extraCho > 0"> · +{{ day.extraCho }}g extra</span>
             </div>
@@ -28,7 +28,7 @@
 
           <div class="text-right flex-shrink-0 tabular-nums">
             <div class="text-base font-bold text-[#1f2421] dark:text-white">{{ day.consumedCho }}g</div>
-            <div class="text-[11px] text-[#8a918c] dark:text-[#8e9790]">di {{ day.totalCho }}g CHO</div>
+            <div class="text-[11px] text-[#8a918c] dark:text-[#8e8f94]">di {{ day.totalCho }}g CHO</div>
           </div>
         </button>
       </li>
@@ -51,9 +51,9 @@ const { setDate } = useCurrentDate()
 
 // Same palette as the day summary rings
 const COLORS = {
-  cho: '#8cc63f',
-  kcal: '#f2b36b',
-  meals: '#ab9cf0',
+  cho: '#d4f65a',
+  kcal: '#ececee',
+  meals: '#7d7e84',
 }
 
 const days = computed(() =>

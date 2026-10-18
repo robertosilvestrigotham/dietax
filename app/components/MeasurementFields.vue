@@ -10,11 +10,11 @@
         <span class="flex items-baseline justify-between">
           <span
             class="text-xs font-medium transition-colors"
-            :class="active === field.key ? 'text-[#5f8a3a] dark:text-[#a7c49a]' : 'text-[#8a918c] dark:text-[#8e9790]'"
+            :class="active === field.key ? 'text-[#5f8a3a] dark:text-[#d4f65a]' : 'text-[#8a918c] dark:text-[#8e8f94]'"
           >
             {{ field.label }}
           </span>
-          <span v-if="active === field.key" class="text-[10px] text-[#8a918c] dark:text-[#8e9790] truncate ml-2">{{ field.hint }}</span>
+          <span v-if="active === field.key" class="text-[10px] text-[#8a918c] dark:text-[#8e8f94] truncate ml-2">{{ field.hint }}</span>
         </span>
         <span class="relative block mt-0.5">
           <input

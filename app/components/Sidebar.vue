@@ -4,7 +4,7 @@
   >
     <!-- Brand -->
     <div class="px-5 pt-7 pb-6 flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-full bg-[#8cc63f] text-white flex items-center justify-center">
+      <div class="w-9 h-9 rounded-full bg-[#d4f65a] text-[#16171a] flex items-center justify-center">
         <Leaf class="w-5 h-5" />
       </div>
       <span class="text-lg font-bold tracking-tight text-[#1f2421] dark:text-white">DietaX</span>
@@ -20,8 +20,8 @@
         class="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-full text-sm font-semibold transition"
         :class="
           isActive(item.to)
-            ? 'bg-[#8cc63f] text-white'
-            : 'text-[#4a524c] dark:text-[#c9d1cb] hover:bg-white/60 dark:hover:bg-white/5'
+            ? 'bg-[#d4f65a] text-[#16171a]'
+            : 'text-[#4a524c] dark:text-[#c8c9cd] hover:bg-white/60 dark:hover:bg-white/5'
         "
       >
         <span class="flex items-center gap-3">

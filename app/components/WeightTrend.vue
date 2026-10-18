@@ -2,7 +2,7 @@
   <figure class="space-y-1">
     <figcaption class="flex items-baseline justify-between">
       <span class="text-xs font-semibold text-[#1f2421] dark:text-white">Andamento del peso</span>
-      <span v-if="delta !== null" class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790]">
+      <span v-if="delta !== null" class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e8f94]">
         {{ delta > 0 ? '+' : '' }}{{ delta }} kg dall'inizio
       </span>
     </figcaption>
@@ -10,11 +10,11 @@
     <div class="relative" @pointerleave="hovered = null">
       <svg :viewBox="`0 0 ${W} ${H}`" class="w-full h-auto overflow-visible" role="img" :aria-label="ariaLabel">
         <!-- Recessive grid: min and max -->
-        <g class="stroke-[#e4e9e1] dark:stroke-[#2a332c]" stroke-width="1">
+        <g class="stroke-[#e4e9e1] dark:stroke-[#2c2d31]" stroke-width="1">
           <line :x1="PAD_L" :x2="W - PAD_R" :y1="y(range.max)" :y2="y(range.max)" />
           <line :x1="PAD_L" :x2="W - PAD_R" :y1="y(range.min)" :y2="y(range.min)" />
         </g>
-        <g class="fill-[#8a918c] dark:fill-[#8e9790]" font-size="10">
+        <g class="fill-[#8a918c] dark:fill-[#8e8f94]" font-size="10">
           <text :x="PAD_L - 6" :y="y(range.max) + 3" text-anchor="end">{{ range.max }}</text>
           <text :x="PAD_L - 6" :y="y(range.min) + 3" text-anchor="end">{{ range.min }}</text>
         </g>
@@ -26,11 +26,11 @@
           :x2="x(hovered)"
           :y1="PAD_T"
           :y2="H - PAD_B"
-          class="stroke-[#c8d3c2] dark:stroke-[#3a4a3d]"
+          class="stroke-[#c8d3c2] dark:stroke-[#3a3b40]"
           stroke-width="1"
         />
 
-        <path :d="linePath" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" class="stroke-[#5f8a3a] dark:stroke-[#6aa036]" />
+        <path :d="linePath" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" class="stroke-[#5f8a3a] dark:stroke-[#d4f65a]" />
 
         <!-- Points with a 2px surface ring, plus larger invisible hit targets -->
         <g v-for="(p, i) in points" :key="p.date">
@@ -38,7 +38,7 @@
             :cx="x(i)"
             :cy="y(p.weightKg)"
             :r="hovered === i || i === points.length - 1 ? 5 : 4"
-            class="fill-[#5f8a3a] dark:fill-[#6aa036] stroke-white dark:stroke-[#1b211d]"
+            class="fill-[#5f8a3a] dark:fill-[#d4f65a] stroke-white dark:stroke-[#222326]"
             stroke-width="2"
           />
           <rect

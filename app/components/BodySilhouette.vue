@@ -1,7 +1,7 @@
 <template>
   <!-- Stylized front view; the active measurement band is highlighted -->
   <svg viewBox="0 0 120 262" class="w-full h-full" role="img" :aria-label="ariaLabel">
-    <g class="fill-[#dbe4d6] dark:fill-[#24332a]">
+    <g class="fill-[#dbe4d6] dark:fill-[#3a3b40]">
       <circle cx="60" cy="26" r="16" />
       <rect x="54" y="40" width="12" height="12" rx="4" />
       <path d="M34 54 Q60 47 86 54 Q95 58 94 70 Q90 100 82 124 Q91 142 90 162 L30 162 Q29 142 38 124 Q30 100 26 70 Q25 58 34 54 Z" />
@@ -20,7 +20,7 @@
         stroke-linecap="round"
         :stroke-width="band.key === active ? 3.5 : 2"
         :stroke-dasharray="band.key === active ? undefined : '3 4'"
-        :class="band.key === active ? 'stroke-[#8cc63f]' : filled?.[band.key] ? 'stroke-[#8fb57a]' : 'stroke-[#b6c4ae] dark:stroke-[#3a4a3d]'"
+        :class="band.key === active ? 'stroke-[#d4f65a]' : filled?.[band.key] ? 'stroke-[#9fb83f]' : 'stroke-[#b6c4ae] dark:stroke-[#3a3b40]'"
         class="transition-all duration-300"
       />
       <circle
@@ -28,7 +28,7 @@
         :cx="band.x2"
         :cy="band.y"
         :r="band.key === active ? 4 : 3"
-        :class="band.key === active ? 'fill-[#8cc63f]' : 'fill-[#8fb57a]'"
+        :class="band.key === active ? 'fill-[#d4f65a]' : 'fill-[#9fb83f]'"
       />
     </g>
   </svg>

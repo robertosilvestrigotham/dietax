@@ -2,7 +2,7 @@
   <nav class="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-sm h-16">
     <!-- Bar with a concave notch under the center button -->
     <div class="absolute inset-0 drop-shadow-[0_8px_24px_rgba(31,36,33,0.12)]">
-      <div class="nav-notch h-full rounded-[28px] bg-white dark:bg-[#1b211d]"></div>
+      <div class="nav-notch h-full rounded-[28px] bg-white dark:bg-[#222326]"></div>
     </div>
 
     <div class="relative h-full grid grid-cols-5 items-center">
@@ -11,7 +11,7 @@
         :key="item.to"
         :to="item.to"
         class="flex items-center justify-center h-full transition-colors"
-        :class="isActive(item.to) ? 'text-[#5f9a22] dark:text-[#a0da6c]' : 'text-[#9aa19c] dark:text-[#6f7872] hover:text-[#1f2421] dark:hover:text-white'"
+        :class="isActive(item.to) ? 'text-[#5f9a22] dark:text-[#d4f65a]' : 'text-[#9aa19c] dark:text-[#6b6c71] hover:text-[#1f2421] dark:hover:text-white'"
         :aria-label="item.label"
         :title="item.label"
       >
@@ -22,7 +22,7 @@
         <NuxtLink
           to="/"
           @click="goToToday"
-          class="-mt-16 w-16 h-16 rounded-full flex items-center justify-center text-white bg-[#8cc63f] shadow-[0_8px_20px_rgba(140,198,63,0.45)] transition-transform active:scale-95"
+          class="-mt-16 w-16 h-16 rounded-full flex items-center justify-center text-[#16171a] bg-[#d4f65a] shadow-[0_8px_20px_rgba(212,246,90,0.3)] transition-transform active:scale-95"
           :class="isActive('/') ? '' : 'opacity-90'"
           aria-label="Oggi"
           title="Oggi"
@@ -36,7 +36,7 @@
         :key="item.to"
         :to="item.to"
         class="flex items-center justify-center h-full transition-colors"
-        :class="isActive(item.to) ? 'text-[#5f9a22] dark:text-[#a0da6c]' : 'text-[#9aa19c] dark:text-[#6f7872] hover:text-[#1f2421] dark:hover:text-white'"
+        :class="isActive(item.to) ? 'text-[#5f9a22] dark:text-[#d4f65a]' : 'text-[#9aa19c] dark:text-[#6b6c71] hover:text-[#1f2421] dark:hover:text-white'"
         :aria-label="item.label"
         :title="item.label"
       >

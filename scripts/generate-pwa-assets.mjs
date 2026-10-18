@@ -6,7 +6,7 @@
 //   pwa-64x64.png, pwa-192x192.png, pwa-512x512.png   (purpose "any", rounded tile)
 //   maskable-icon-512x512.png                           (purpose "maskable", full bleed + safe zone)
 //   apple-touch-icon.png                                (180x180, full bleed, iOS rounds it)
-//   splash/apple-splash-{light,dark}-{w}x{h}.png        (iOS launch screens)
+//   splash/apple-splash-dark-{w}x{h}.png        (iOS launch screens)
 // and scripts/pwa-splash-links.json with the <link rel="apple-touch-startup-image"> tags.
 
 import { mkdir, rm, writeFile } from 'node:fs/promises'
@@ -21,13 +21,12 @@ const splashDir = join(publicDir, 'splash')
 
 // Palette shared with the app (DayProgressSummary rings + page background)
 const RINGS = [
-  { color: '#8cc63f', pct: 0.78 }, // CHO (outer, thickest)
-  { color: '#ab9cf0', pct: 0.62 }, // Pasti
-  { color: '#8fc8f2', pct: 0.88 }, // Aderenza (inner, thinnest)
+  { color: '#d4f65a', pct: 0.78 }, // CHO (outer, thickest)
+  { color: '#ececee', pct: 0.62 }, // Calorie
+  { color: '#7d7e84', pct: 0.88 }, // Pasti (inner, thinnest)
 ]
 const THEMES = {
-  light: { page: '#e5ede2', tileFrom: '#eaf5dd', tileTo: '#d3eabd', track: 0.24 },
-  dark: { page: '#0c1610', tileFrom: '#1f3a24', tileTo: '#142a19', track: 0.2 },
+  dark: { page: '#131416', tileFrom: '#2a2c30', tileTo: '#18191b', track: 0.2 },
 }
 
 /**
@@ -51,7 +50,7 @@ function ringsSvg(extent, trackOpacity) {
 }
 
 /** Logo SVG. `rounded`: tile with transparent corners; otherwise full-bleed square. */
-function logoSvg({ theme = 'light', rounded = true, extent = 196 } = {}) {
+function logoSvg({ theme = 'dark', rounded = true, extent = 196 } = {}) {
   const t = THEMES[theme]
   const radius = rounded ? 115 : 0
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
@@ -124,7 +123,7 @@ async function main() {
   // iOS only rounds the corners, so the rings can be larger than in the maskable icon
   await write('apple-touch-icon.png', await png(logoSvg({ rounded: false, extent: 188 }), 180))
 
-  // iOS launch screens: one per unique portrait resolution, light + dark
+  // iOS launch screens: one per unique portrait resolution, dark only (the app has no light theme)
   await rm(splashDir, { recursive: true, force: true })
   await mkdir(splashDir, { recursive: true })
   const seen = new Set()
@@ -133,7 +132,7 @@ async function main() {
     const key = `${width}x${height}`
     if (seen.has(key)) continue
     seen.add(key)
-    for (const theme of ['light', 'dark']) {
+    for (const theme of ['dark']) {
       const file = `apple-splash-${theme}-${key}.png`
       await writeFile(join(splashDir, file), await splash(theme, width, height))
       links.push({
@@ -141,7 +140,7 @@ async function main() {
         href: `/splash/${file}`,
         media:
           `(device-width: ${width / scaleFactor}px) and (device-height: ${height / scaleFactor}px) and ` +
-          `(-webkit-device-pixel-ratio: ${scaleFactor}) and (orientation: portrait) and (prefers-color-scheme: ${theme})`,
+          `(-webkit-device-pixel-ratio: ${scaleFactor}) and (orientation: portrait)`,
       })
     }
   }

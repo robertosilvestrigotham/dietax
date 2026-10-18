@@ -16,17 +16,17 @@
     />
     <ul
       v-if="isOpen"
-      class="absolute z-30 left-0 right-0 mt-1 py-1 rounded-xl bg-white dark:bg-[#232a25] shadow-mac-lg max-h-64 overflow-y-auto"
+      class="absolute z-30 left-0 right-0 mt-1 py-1 rounded-xl bg-white dark:bg-[#34353a] shadow-mac-lg max-h-64 overflow-y-auto"
     >
       <li v-for="(food, i) in suggestions" :key="food.id">
         <button
           type="button"
           @mousedown.prevent="pick(food)"
           class="w-full text-left px-3 py-2 flex items-center justify-between gap-3 transition"
-          :class="i === highlighted ? 'bg-[#f1f4ef] dark:bg-[#2b342d]' : 'hover:bg-[#f1f4ef] dark:hover:bg-[#2b342d]'"
+          :class="i === highlighted ? 'bg-[#f1f4ef] dark:bg-[#3a3b40]' : 'hover:bg-[#f1f4ef] dark:hover:bg-[#3a3b40]'"
         >
           <span class="text-xs font-medium text-[#1f2421] dark:text-white truncate">{{ food.name }}</span>
-          <span class="text-[11px] tabular-nums text-[#8a918c] dark:text-[#8e9790] flex-shrink-0">
+          <span class="text-[11px] tabular-nums text-[#8a918c] dark:text-[#8e8f94] flex-shrink-0">
             {{ describe(food) }}
           </span>
         </button>

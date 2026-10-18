@@ -20,7 +20,7 @@
         :style="{ width: `${position(range.to) - position(range.from)}%` }"
       ></div>
     </div>
-    <div class="flex text-[10px] text-[#8a918c] dark:text-[#8e9790]">
+    <div class="flex text-[10px] text-[#8a918c] dark:text-[#8e8f94]">
       <span
         v-for="range in RANGES"
         :key="range.label"
@@ -43,7 +43,7 @@ const MIN = 15
 const MAX = 40
 const RANGES = [
   { from: MIN, to: 18.5, label: 'Sottopeso', color: 'bg-[#8fc8f2]' },
-  { from: 18.5, to: 25, label: 'Normopeso', color: 'bg-[#8cc63f]' },
+  { from: 18.5, to: 25, label: 'Normopeso', color: 'bg-[#d4f65a]' },
   { from: 25, to: 30, label: 'Sovrappeso', color: 'bg-[#f2b36b]' },
   { from: 30, to: MAX, label: 'Obesità', color: 'bg-[#e8907a]' },
 ]

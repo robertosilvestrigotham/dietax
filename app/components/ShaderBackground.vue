@@ -21,7 +21,7 @@ const FRAME_INTERVAL = 1000 / 30
 
 const PALETTES = {
   light: ['#dcefcb', '#f1f6c6', '#cfeedd', '#e6e3f7', '#d6e9f7'],
-  dark: ['#1a3320', '#26301a', '#143029', '#232540', '#162b38'],
+  dark: ['#1d1f21', '#2b3218', '#17181a', '#26282c', '#23281a'],
 }
 
 const VERTEX_SHADER = `

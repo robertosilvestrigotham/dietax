@@ -10,8 +10,8 @@
       class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition active:scale-95"
       :class="
         item.status === 'bought'
-          ? 'bg-[#8cc63f] text-white'
-          : 'bg-white dark:bg-[#262e28] text-[#c3c8c4] dark:text-[#4d564f] hover:text-[#8cc63f]'
+          ? 'bg-[#d4f65a] text-[#16171a]'
+          : 'bg-white dark:bg-[#34353a] text-[#c3c8c4] dark:text-[#55565b] hover:text-[#d4f65a]'
       "
       :aria-label="`Segna ${item.name} come ${item.status === 'bought' ? 'non acquistato' : 'acquistato'}`"
     >
@@ -24,14 +24,14 @@
         class="font-medium truncate"
         :class="
           item.status === 'bought' || item.status === 'in_pantry'
-            ? 'line-through text-[#9aa19c] dark:text-[#6f7872]'
-            : 'text-[#1f2421] dark:text-[#eef1ef]'
+            ? 'line-through text-[#9aa19c] dark:text-[#6b6c71]'
+            : 'text-[#1f2421] dark:text-[#f4f4f5]'
         "
       >
         {{ item.name }}
       </div>
-      <div class="text-[11px] text-[#8a918c] dark:text-[#8e9790] truncate">
-        <span class="font-semibold text-[#4a524c] dark:text-[#c9d1cb] tabular-nums">{{ formattedQuantity }}</span>
+      <div class="text-[11px] text-[#8a918c] dark:text-[#8e8f94] truncate">
+        <span class="font-semibold text-[#4a524c] dark:text-[#c8c9cd] tabular-nums">{{ formattedQuantity }}</span>
         <template v-if="'preparationState' in item && item.preparationState && item.preparationState !== 'none'">
           · {{ formatPreparationLabel(item.preparationState) }}
         </template>
@@ -48,8 +48,8 @@
       class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition"
       :class="
         item.status === 'in_pantry'
-          ? 'bg-[#a3bb97] text-white dark:bg-[#3a5a3c]'
-          : 'text-[#9aa19c] dark:text-[#6f7872] hover:bg-white dark:hover:bg-[#262e28] hover:text-[#4a524c]'
+          ? 'bg-[#9fb83f] text-white dark:bg-[#5c6b2a]'
+          : 'text-[#9aa19c] dark:text-[#6b6c71] hover:bg-white dark:hover:bg-[#34353a] hover:text-[#4a524c]'
       "
       :title="item.status === 'in_pantry' ? 'Rimuovi dalla dispensa' : 'Ce l\'ho in dispensa'"
       :aria-label="item.status === 'in_pantry' ? 'Rimuovi dalla dispensa' : 'Segna in dispensa'"
@@ -62,7 +62,7 @@
       v-if="isManual"
       type="button"
       @click="$emit('delete')"
-      class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[#9aa19c] hover:text-rose-600 hover:bg-white dark:hover:bg-[#262e28] transition"
+      class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[#9aa19c] hover:text-rose-600 hover:bg-white dark:hover:bg-[#34353a] transition"
       title="Elimina"
       aria-label="Elimina prodotto"
     >

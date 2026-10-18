@@ -5,12 +5,12 @@
       <div
         class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
         :class="[
-          'text-white dark:text-[#e8f0e4]',
+          isActive ? 'text-[#16171a]' : 'text-white dark:text-[#ececee]',
           isCompleted
-            ? 'bg-[#a3bb97] dark:bg-[#3a5a3c]'
+            ? 'bg-[#9fb83f] dark:bg-[#5c6b2a]'
             : isActive
-              ? 'bg-[#8cc63f] ring-2 ring-offset-2 ring-[#8cc63f] ring-offset-[#e5ede2] dark:ring-offset-[#0c1610]'
-              : 'bg-[#c8d3c2] dark:bg-[#24332a]',
+              ? 'bg-[#d4f65a] ring-2 ring-offset-2 ring-[#d4f65a] ring-offset-[#e5ede2] dark:ring-offset-[#131416]'
+              : 'bg-[#c8d3c2] dark:bg-[#3a3b40]',
         ]"
       >
         <component :is="slotIcon" class="w-5 h-5" />
@@ -18,7 +18,7 @@
       <div
         v-if="!isLast"
         class="w-0.5 rounded-full flex-1 mt-2"
-        :class="isCompleted ? 'bg-[#a3bb97] dark:bg-[#3a5a3c]' : 'bg-[#d6dfd1] dark:bg-[#1d2a20]'"
+        :class="isCompleted ? 'bg-[#9fb83f] dark:bg-[#5c6b2a]' : 'bg-[#d6dfd1] dark:bg-[#34353a]'"
       ></div>
     </div>
 
@@ -38,9 +38,9 @@
             </span>
           </div>
           <div class="text-xs mt-0.5 tabular-nums">
-            <span class="font-semibold text-[#1f2421] dark:text-[#e6ebe7]">{{ mealCho.totalCho }}g CHO</span>
-            <span class="text-[#8a918c] dark:text-[#8e9790]"> · {{ mealKcal.totalKcal }} kcal</span>
-            <span v-if="completedTimeFormatted" class="text-[#9aa19c] dark:text-[#7d867f]"> · alle {{ completedTimeFormatted }}</span>
+            <span class="font-semibold text-[#1f2421] dark:text-[#ececee]">{{ mealCho.totalCho }}g CHO</span>
+            <span class="text-[#8a918c] dark:text-[#8e8f94]"> · {{ mealKcal.totalKcal }} kcal</span>
+            <span v-if="completedTimeFormatted" class="text-[#9aa19c] dark:text-[#8e8f94]"> · alle {{ completedTimeFormatted }}</span>
           </div>
         </div>
 
@@ -50,7 +50,7 @@
             v-if="!isLocked"
             type="button"
             @click="toggleAddExtra"
-            class="w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95 bg-white dark:bg-[#1b211d] text-[#4a524c] dark:text-[#c9d1cb] hover:bg-[#e6f3d6] hover:text-[#4c8a17] disabled:opacity-35 disabled:pointer-events-none"
+            class="w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95 bg-white dark:bg-[#222326] text-[#4a524c] dark:text-[#c8c9cd] hover:bg-[#e6f3d6] hover:text-[#4c8a17] disabled:opacity-35 disabled:pointer-events-none"
             :title="isAddingExtra ? 'Chiudi' : 'Aggiungi alimento extra'"
             aria-label="Aggiungi extra"
           >
@@ -59,7 +59,7 @@
           </button>
           <span
             v-if="isCompleted"
-            class="w-9 h-9 rounded-full flex items-center justify-center bg-[#a3bb97] dark:bg-[#3a5a3c] text-white"
+            class="w-9 h-9 rounded-full flex items-center justify-center bg-[#9fb83f] dark:bg-[#5c6b2a] text-white"
             title="Pasto confermato"
           >
             <Check class="w-4 h-4" weight="bold" />
@@ -68,7 +68,7 @@
             v-else-if="!isLocked"
             type="button"
             @click="toggleCompleted"
-            class="w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95 bg-white dark:bg-[#1b211d] text-[#c3c8c4] dark:text-[#4d564f] hover:text-[#8cc63f]"
+            class="w-9 h-9 rounded-full flex items-center justify-center transition active:scale-95 bg-white dark:bg-[#222326] text-[#c3c8c4] dark:text-[#55565b] hover:text-[#d4f65a]"
             title="Conferma pasto"
             aria-label="Conferma pasto"
           >
@@ -114,7 +114,7 @@
             class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl transition"
             :class="[
               isLocked ? tone.rowStatic : [tone.row, 'cursor-pointer'],
-              editingExtraId === extra.id ? 'ring-2 ring-[#8cc63f]' : '',
+              editingExtraId === extra.id ? 'ring-2 ring-[#d4f65a]' : '',
             ]"
           >
             <div class="min-w-0 text-xs">
@@ -162,7 +162,7 @@
         </div>
 
         <!-- Inline extra food form -->
-        <div v-if="isAddingExtra" class="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#232a25] space-y-3">
+        <div v-if="isAddingExtra" class="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#34353a] space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-[#1f2421] dark:text-white">
               {{ editingExtraId ? 'Modifica alimento' : 'Aggiungi alimento' }}
@@ -178,9 +178,9 @@
               :key="p.label"
               type="button"
               @click="applyPreset(p)"
-              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c9d1cb] transition"
+              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#222326] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c8c9cd] transition"
             >
-              {{ p.label }} <span class="font-semibold text-[#4c8a17] dark:text-[#a0da6c]">+{{ p.cho }}g</span>
+              {{ p.label }} <span class="font-semibold text-[#4c8a17] dark:text-[#d4f65a]">+{{ p.cho }}g</span>
             </button>
           </div>
 
@@ -196,7 +196,7 @@
             <button
               type="submit"
               :disabled="!extraEntry.name.value.trim() || extraEntry.cho.value === null"
-              class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#8cc63f] hover:bg-[#7db536] text-white transition disabled:opacity-40"
+              class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#d4f65a] hover:bg-[#c2e646] text-[#16171a] transition disabled:opacity-40"
             >
               {{ editingExtraId ? 'Salva' : 'Aggiungi' }}
             </button>
@@ -217,7 +217,7 @@
         <form
           v-if="isReplacing"
           @submit.prevent="saveReplacement"
-          class="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#232a25] space-y-3"
+          class="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#34353a] space-y-3"
         >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-[#1f2421] dark:text-white">Cosa mangi al suo posto?</span>
@@ -232,7 +232,7 @@
               :key="idea.dish.id"
               type="button"
               @click="useIdeaAsReplacement(idea)"
-              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c9d1cb] transition text-left"
+              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#222326] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c8c9cd] transition text-left"
             >
               {{ idea.dish.name }} <span class="tabular-nums text-[#8a918c]">· {{ idea.kcal }} kcal</span>
             </button>
@@ -248,7 +248,7 @@
           <button
             type="submit"
             :disabled="!replacementEntry.name.value.trim() || replacementEntry.cho.value === null"
-            class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#8cc63f] hover:bg-[#7db536] text-white transition disabled:opacity-40"
+            class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#d4f65a] hover:bg-[#c2e646] text-[#16171a] transition disabled:opacity-40"
           >
             Sostituisci
           </button>
@@ -256,7 +256,7 @@
             v-if="replacement"
             type="button"
             @click="restorePlannedMeal"
-            class="text-xs font-medium text-[#5f8a3a] dark:text-[#a7c49a] flex items-center gap-1"
+            class="text-xs font-medium text-[#5f8a3a] dark:text-[#d4f65a] flex items-center gap-1"
           >
             <ArrowCounterClockwise class="w-3.5 h-3.5" />
             Torna al pasto previsto
@@ -264,7 +264,7 @@
         </form>
 
         <!-- Plan mode: swap the dish with one of similar calories/CHO -->
-        <div v-if="isSwappingDish" class="mt-3 p-3 rounded-xl bg-white dark:bg-[#232a25] space-y-1.5">
+        <div v-if="isSwappingDish" class="mt-3 p-3 rounded-xl bg-white dark:bg-[#34353a] space-y-1.5">
           <div class="flex items-center justify-between pb-1">
             <span class="text-xs font-semibold text-[#1f2421] dark:text-white">Stesse calorie, piatto diverso</span>
             <button type="button" @click="isSwappingDish = false" class="text-xs text-[#8a918c] hover:text-[#1f2421] dark:hover:text-white">
@@ -276,7 +276,7 @@
             :key="option.dish.id"
             type="button"
             @click="swapDish(option)"
-            class="w-full px-3 py-2 rounded-xl bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] dark:hover:bg-[#1f2c1f] transition text-left flex items-center justify-between gap-2"
+            class="w-full px-3 py-2 rounded-xl bg-[#f1f4ef] dark:bg-[#222326] hover:bg-[#e6f3d6] dark:hover:bg-[#2f3520] transition text-left flex items-center justify-between gap-2"
           >
             <span class="min-w-0">
               <span class="block text-xs font-medium text-[#1f2421] dark:text-white truncate">{{ option.dish.name }}</span>
@@ -286,7 +286,7 @@
             </span>
             <span class="text-[11px] tabular-nums text-[#8a918c] flex-shrink-0">{{ option.kcal }} kcal · {{ Math.round(option.cho) }}g</span>
           </button>
-          <button type="button" @click="moreDishOptions" class="w-full py-1.5 text-xs font-medium text-[#5f8a3a] dark:text-[#a7c49a] flex items-center justify-center gap-1">
+          <button type="button" @click="moreDishOptions" class="w-full py-1.5 text-xs font-medium text-[#5f8a3a] dark:text-[#d4f65a] flex items-center justify-center gap-1">
             <ArrowsClockwise class="w-3.5 h-3.5" />
             Altre idee
           </button>
@@ -506,26 +506,26 @@ const isActive = computed(
 const tone = computed(() =>
   isActive.value
     ? {
-        card: 'bg-[#8cc63f]',
-        text: 'text-white',
-        muted: 'text-white/80',
-        accent: 'text-white',
-        row: 'bg-white/20 hover:bg-white/30',
-        rowStatic: 'bg-white/20',
-        chipOn: 'bg-white text-[#4c8a17]',
-        chipOff: 'bg-white/20 text-white hover:bg-white/30',
-        ghost: 'bg-white/25 text-white hover:bg-white/35',
+        card: 'bg-[#d4f65a]',
+        text: 'text-[#16171a]',
+        muted: 'text-[#16171a]/65',
+        accent: 'text-[#16171a]',
+        row: 'bg-black/10 hover:bg-black/15',
+        rowStatic: 'bg-black/10',
+        chipOn: 'bg-[#16171a] text-[#d4f65a]',
+        chipOff: 'bg-black/10 text-[#16171a] hover:bg-black/15',
+        ghost: 'bg-black/10 text-[#16171a] hover:bg-black/15',
       }
     : {
-        card: 'bg-[#f1f4ef] dark:bg-[#18221b]',
-        text: 'text-[#1f2421] dark:text-[#eef1ef]',
-        muted: 'text-[#8a918c] dark:text-[#8e9790]',
-        accent: 'text-[#4c8a17] dark:text-[#a0da6c]',
-        row: 'bg-white dark:bg-[#232a25] hover:bg-[#fafbfa] dark:hover:bg-[#283029]',
-        rowStatic: 'bg-white dark:bg-[#232a25]',
-        chipOn: 'bg-[#1f2421] text-white dark:bg-white dark:text-[#1f2421]',
-        chipOff: 'bg-white dark:bg-[#262e28] text-[#4a524c] dark:text-[#c9d1cb] hover:bg-[#e9ebe9] dark:hover:bg-[#2d362f]',
-        ghost: 'text-[#8a918c] dark:text-[#8e9790] hover:bg-white dark:hover:bg-[#262e28] hover:text-[#1f2421] dark:hover:text-white',
+        card: 'bg-[#f1f4ef] dark:bg-[#2b2c30]',
+        text: 'text-[#1f2421] dark:text-[#f4f4f5]',
+        muted: 'text-[#8a918c] dark:text-[#8e8f94]',
+        accent: 'text-[#4c8a17] dark:text-[#d4f65a]',
+        row: 'bg-white dark:bg-[#34353a] hover:bg-[#fafbfa] dark:hover:bg-[#3a3b40]',
+        rowStatic: 'bg-white dark:bg-[#34353a]',
+        chipOn: 'bg-[#d4f65a] text-[#16171a]',
+        chipOff: 'bg-white dark:bg-[#34353a] text-[#4a524c] dark:text-[#c8c9cd] hover:bg-[#e9ebe9] dark:hover:bg-[#3a3b40]',
+        ghost: 'text-[#8a918c] dark:text-[#8e8f94] hover:bg-white dark:hover:bg-[#34353a] hover:text-[#1f2421] dark:hover:text-white',
       }
 )
 

@@ -2,7 +2,7 @@
   <div class="ui-modal-backdrop">
     <div class="ui-modal sm:max-w-lg">
       <!-- Hero: animated background, step icon and title -->
-      <div class="relative isolate overflow-hidden px-5 pt-5 pb-6 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#1b3420] dark:to-[#1f2c14]">
+      <div class="relative isolate overflow-hidden px-5 pt-5 pb-6 bg-gradient-to-br from-[#e3f2d3] to-[#eef5c8] dark:from-[#232427] dark:to-[#2c331a]">
         <ShaderBackground class="-z-10" />
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
@@ -32,11 +32,11 @@
         <Transition name="hero" mode="out-in">
           <div :key="step" class="mt-6 flex items-end gap-4">
             <span class="w-16 h-16 rounded-[22px] bg-white/75 dark:bg-white/10 backdrop-blur flex items-center justify-center flex-shrink-0 shadow-[0_6px_20px_rgba(60,100,40,0.12)]">
-              <component :is="HERO[step]!.icon" class="w-9 h-9 text-[#5f8a3a] dark:text-[#a7c49a]" />
+              <component :is="HERO[step]!.icon" class="w-9 h-9 text-[#5f8a3a] dark:text-[#d4f65a]" />
             </span>
             <div class="min-w-0 pb-0.5">
               <h2 class="text-2xl font-bold tracking-tight text-[#1f2421] dark:text-white leading-tight">{{ HERO[step]!.title }}</h2>
-              <p class="text-sm text-[#4a5a44] dark:text-[#b9cbb0] mt-0.5">{{ HERO[step]!.subtitle }}</p>
+              <p class="text-sm text-[#4a5a44] dark:text-[#b5b6ba] mt-0.5">{{ HERO[step]!.subtitle }}</p>
             </div>
           </div>
         </Transition>
@@ -53,11 +53,11 @@
                 type="button"
                 @click="form.sex = opt.value"
                 class="ui-card p-4 flex flex-col items-center gap-2 transition active:scale-[0.98]"
-                :class="form.sex === opt.value ? 'ring-2 ring-[#8cc63f] bg-[#f4faec] dark:bg-[#1f2c1f]' : ''"
+                :class="form.sex === opt.value ? 'ring-2 ring-[#d4f65a] bg-[#f4faec] dark:bg-[#2f3520]' : ''"
               >
                 <span
                   class="w-14 h-14 rounded-full flex items-center justify-center transition-colors"
-                  :class="form.sex === opt.value ? 'bg-[#8cc63f] text-white' : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#8a918c]'"
+                  :class="form.sex === opt.value ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#8a918c]'"
                 >
                   <component :is="opt.icon" class="w-7 h-7" />
                 </span>
@@ -65,11 +65,11 @@
               </button>
             </div>
             <label class="ui-card p-4 flex items-center gap-3">
-              <span class="w-10 h-10 rounded-full bg-[#f1f4ef] dark:bg-[#18221b] text-[#8fb57a] flex items-center justify-center flex-shrink-0">
+              <span class="w-10 h-10 rounded-full bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#9fb83f] flex items-center justify-center flex-shrink-0">
                 <Cake class="w-5 h-5" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="block text-xs text-[#8a918c] dark:text-[#8e9790]">Anno di nascita</span>
+                <span class="block text-xs text-[#8a918c] dark:text-[#8e8f94]">Anno di nascita</span>
                 <input
                   v-model.number="form.birthYear"
                   type="number"
@@ -78,7 +78,7 @@
                   class="w-full bg-transparent border-0 p-0 text-xl font-bold text-[#1f2421] dark:text-white placeholder:text-[#c3c8c4] focus:ring-0 focus:outline-none tabular-nums"
                 />
               </span>
-              <span v-if="isValidYear(form.birthYear)" class="text-sm font-semibold text-[#5f8a3a] dark:text-[#a7c49a] tabular-nums">
+              <span v-if="isValidYear(form.birthYear)" class="text-sm font-semibold text-[#5f8a3a] dark:text-[#d4f65a] tabular-nums">
                 {{ currentYear - Number(form.birthYear) }} anni
               </span>
             </label>
@@ -88,10 +88,10 @@
           <section v-else-if="step === 1" key="1" class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
               <label v-for="field in BODY_FIELDS" :key="field.key" class="ui-card p-4 flex flex-col items-center text-center">
-                <span class="w-12 h-12 rounded-full bg-[#f1f4ef] dark:bg-[#18221b] text-[#8fb57a] flex items-center justify-center">
+                <span class="w-12 h-12 rounded-full bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#9fb83f] flex items-center justify-center">
                   <component :is="field.icon" class="w-6 h-6" />
                 </span>
-                <span class="mt-2 text-xs text-[#8a918c] dark:text-[#8e9790]">{{ field.label }}</span>
+                <span class="mt-2 text-xs text-[#8a918c] dark:text-[#8e8f94]">{{ field.label }}</span>
                 <span class="flex items-baseline justify-center gap-1">
                   <input
                     v-model.number="form[field.key]"
@@ -99,7 +99,7 @@
                     inputmode="decimal"
                     :step="field.step"
                     :placeholder="field.placeholder"
-                    class="w-24 bg-transparent border-0 p-0 text-center text-3xl font-bold text-[#1f2421] dark:text-white placeholder:text-[#d6dbd7] dark:placeholder:text-[#3a433c] focus:ring-0 focus:outline-none tabular-nums"
+                    class="w-24 bg-transparent border-0 p-0 text-center text-3xl font-bold text-[#1f2421] dark:text-white placeholder:text-[#d6dbd7] dark:placeholder:text-[#55565b] focus:ring-0 focus:outline-none tabular-nums"
                   />
                   <span class="text-sm text-[#8a918c]">{{ field.unit }}</span>
                 </span>
@@ -126,12 +126,12 @@
                   type="button"
                   @click="form.lifestyle = key"
                   class="p-3 rounded-2xl flex flex-col items-center gap-1.5 text-center transition active:scale-[0.98]"
-                  :class="form.lifestyle === key ? 'bg-[#8cc63f] text-white' : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#1f2421] dark:text-white'"
+                  :class="form.lifestyle === key ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#1f2421] dark:text-[#16171a]'"
                 >
                   <component
                     :is="LIFESTYLE_ICONS[key]"
                     class="w-7 h-7"
-                    :class="form.lifestyle === key ? '' : 'text-[#8fb57a]'"
+                    :class="form.lifestyle === key ? '' : 'text-[#9fb83f]'"
                   />
                   <span class="text-xs font-semibold">{{ info.label }}</span>
                 </button>
@@ -157,11 +157,11 @@
                 type="button"
                 @click="form.goal = key"
                 class="ui-card p-3 flex flex-col items-center gap-1.5 transition active:scale-[0.98]"
-                :class="form.goal === key ? 'ring-2 ring-[#8cc63f] bg-[#f4faec] dark:bg-[#1f2c1f]' : ''"
+                :class="form.goal === key ? 'ring-2 ring-[#d4f65a] bg-[#f4faec] dark:bg-[#2f3520]' : ''"
               >
                 <span
                   class="w-11 h-11 rounded-full flex items-center justify-center"
-                  :class="form.goal === key ? 'bg-[#8cc63f] text-white' : 'bg-[#f1f4ef] dark:bg-[#18221b] text-[#8a918c]'"
+                  :class="form.goal === key ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#8a918c]'"
                 >
                   <component :is="GOAL_ICONS[key]" class="w-6 h-6" />
                 </span>
@@ -176,14 +176,14 @@
             <div class="ui-card flex items-center gap-4">
               <!-- Target vs maintenance -->
               <AppleActivityRings :values="resultRings" :size="104" class="flex-shrink-0">
-                <Fire class="w-7 h-7 text-[#f2b36b]" />
+                <Fire class="w-7 h-7 text-[#ececee]" />
               </AppleActivityRings>
               <div class="min-w-0">
                 <span class="ui-muted">Obiettivo giornaliero</span>
                 <div class="text-4xl font-bold tracking-tight tabular-nums text-[#1f2421] dark:text-white leading-none my-1">
                   {{ summary.targetKcal }}<span class="text-base font-semibold text-[#8a918c] ml-1">kcal</span>
                 </div>
-                <span class="inline-flex items-center gap-1 text-xs font-semibold text-[#5f8a3a] dark:text-[#a7c49a]">
+                <span class="inline-flex items-center gap-1 text-xs font-semibold text-[#5f8a3a] dark:text-[#d4f65a]">
                   <component :is="GOAL_ICONS[form.goal]" class="w-3.5 h-3.5" />
                   {{ WEIGHT_GOALS[form.goal].label }}
                 </span>
@@ -210,7 +210,7 @@
                   <span class="w-7 h-7 rounded-full flex items-center justify-center text-white flex-shrink-0" :class="part.bar">
                     <component :is="part.icon" class="w-4 h-4" weight="fill" />
                   </span>
-                  <span class="flex-1 text-[#4a524c] dark:text-[#c9d1cb]">{{ part.label }}</span>
+                  <span class="flex-1 text-[#4a524c] dark:text-[#c8c9cd]">{{ part.label }}</span>
                   <span class="font-semibold tabular-nums text-[#1f2421] dark:text-white">{{ part.kcal }}</span>
                 </li>
               </ul>
@@ -228,8 +228,8 @@
                   <span class="text-[#8a918c]">Il tuo piano</span>
                   <span class="font-semibold tabular-nums text-[#1f2421] dark:text-white">{{ planAverageKcal }} kcal</span>
                 </div>
-                <div class="relative h-2 rounded-full bg-[#f1f4ef] dark:bg-[#18221b]">
-                  <div class="absolute inset-y-0 left-0 rounded-full bg-[#ab9cf0]" :style="{ width: `${planBarWidth}%` }"></div>
+                <div class="relative h-2 rounded-full bg-[#f1f4ef] dark:bg-[#2b2c30]">
+                  <div class="absolute inset-y-0 left-0 rounded-full bg-[#7d7e84]" :style="{ width: `${planBarWidth}%` }"></div>
                   <div class="absolute -top-1 -bottom-1 w-0.5 rounded-full bg-[#1f2421] dark:bg-white" :style="{ left: `${targetBarPosition}%` }"></div>
                 </div>
                 <p class="text-xs text-[#8a918c]">{{ planDeltaLabel }}</p>
@@ -240,17 +240,17 @@
                 <span class="relative inline-flex items-center flex-shrink-0">
                   <input v-model="form.autoKcalGoal" type="checkbox" class="sr-only peer" />
                   <span
-                    class="w-11 h-6 rounded-full bg-[#d6dfd1] dark:bg-[#2c342e] peer-checked:bg-[#8cc63f] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
+                    class="w-11 h-6 rounded-full bg-[#d6dfd1] dark:bg-[#34353a] peer-checked:bg-[#d4f65a] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
                   ></span>
                 </span>
               </label>
-              <button type="button" @click="downloadMeasurementReminder" class="w-full ui-panel px-3 py-2.5 flex items-center gap-3 text-left hover:bg-[#e9eee6] dark:hover:bg-[#1d2820] transition">
-                <CalendarPlus class="w-5 h-5 text-[#8fb57a] flex-shrink-0" />
+              <button type="button" @click="downloadMeasurementReminder" class="w-full ui-panel px-3 py-2.5 flex items-center gap-3 text-left hover:bg-[#e9eee6] dark:hover:bg-[#2b2c30] transition">
+                <CalendarPlus class="w-5 h-5 text-[#9fb83f] flex-shrink-0" />
                 <span class="flex-1 text-xs font-medium text-[#1f2421] dark:text-white">Promemoria ogni 2 settimane nel calendario</span>
               </button>
             </div>
 
-            <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6f7872]">
+            <p class="px-1 text-[11px] leading-relaxed text-[#8a918c] dark:text-[#6b6c71]">
               Stima con la formula di Mifflin-St Jeor. Non sostituisce il parere di un medico o di un nutrizionista.
             </p>
           </section>
@@ -260,9 +260,9 @@
             <!-- Short, honest progress: the computation itself is instant -->
             <div v-if="isPreparing" class="ui-card py-8 flex flex-col items-center gap-5">
               <span class="relative w-16 h-16">
-                <span class="absolute inset-0 rounded-full border-4 border-[#e4eed7] dark:border-[#24332a]"></span>
-                <span class="absolute inset-0 rounded-full border-4 border-transparent border-t-[#8cc63f] animate-spin"></span>
-                <MagicWand class="absolute inset-0 m-auto w-7 h-7 text-[#5f8a3a] dark:text-[#a7c49a]" />
+                <span class="absolute inset-0 rounded-full border-4 border-[#e4eed7] dark:border-[#3a3b40]"></span>
+                <span class="absolute inset-0 rounded-full border-4 border-transparent border-t-[#d4f65a] animate-spin"></span>
+                <MagicWand class="absolute inset-0 m-auto w-7 h-7 text-[#5f8a3a] dark:text-[#d4f65a]" />
               </span>
               <ul class="space-y-2 w-full max-w-[16rem]">
                 <li
@@ -273,7 +273,7 @@
                 >
                   <span
                     class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                    :class="i < prepIndex ? 'bg-[#8cc63f] text-white' : 'bg-[#f1f4ef] dark:bg-[#18221b]'"
+                    :class="i < prepIndex ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-[#f1f4ef] dark:bg-[#2b2c30]'"
                   >
                     <CheckIcon v-if="i < prepIndex" class="w-3 h-3" weight="bold" />
                   </span>
@@ -284,7 +284,7 @@
 
             <template v-else-if="menuResult">
               <div v-if="!menuHasChanges" class="ui-card p-5 flex items-center gap-3">
-                <span class="w-11 h-11 rounded-full bg-[#8cc63f] text-white flex items-center justify-center flex-shrink-0">
+                <span class="w-11 h-11 rounded-full bg-[#d4f65a] text-[#16171a] flex items-center justify-center flex-shrink-0">
                   <CheckIcon class="w-6 h-6" weight="bold" />
                 </span>
                 <span class="text-sm text-[#1f2421] dark:text-white">
@@ -473,9 +473,9 @@ const needParts = computed(() => {
   if (!summary.value) return []
   const { bmr, dailyLifeKcal, workoutKcalPerDay } = summary.value
   return [
-    { label: 'A riposo', kcal: bmr, icon: Bed, bar: 'bg-[#ab9cf0]' },
-    { label: 'Movimento quotidiano', kcal: dailyLifeKcal - bmr, icon: PhPersonSimpleWalk, bar: 'bg-[#8fb57a]' },
-    { label: 'Allenamenti (media al giorno)', kcal: workoutKcalPerDay, icon: PhBarbell, bar: 'bg-[#f2b36b]' },
+    { label: 'A riposo', kcal: bmr, icon: Bed, bar: 'bg-[#7d7e84]' },
+    { label: 'Movimento quotidiano', kcal: dailyLifeKcal - bmr, icon: PhPersonSimpleWalk, bar: 'bg-[#9fb83f]' },
+    { label: 'Allenamenti (media al giorno)', kcal: workoutKcalPerDay, icon: PhBarbell, bar: 'bg-[#ececee]' },
   ].filter((part) => part.kcal > 0)
 })
 
@@ -489,8 +489,8 @@ const liveBmi = computed(() =>
 const resultRings = computed(() => {
   if (!summary.value) return []
   return [
-    { key: 'target', pct: Math.min(100, (summary.value.targetKcal / summary.value.tdee) * 100), color: '#f2b36b' },
-    { key: 'plan', pct: Math.min(100, (planAverageKcal.value / summary.value.targetKcal) * 100), color: '#ab9cf0' },
+    { key: 'target', pct: Math.min(100, (summary.value.targetKcal / summary.value.tdee) * 100), color: '#ececee' },
+    { key: 'plan', pct: Math.min(100, (planAverageKcal.value / summary.value.targetKcal) * 100), color: '#7d7e84' },
   ]
 })
 

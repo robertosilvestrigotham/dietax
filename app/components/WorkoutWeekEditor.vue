@@ -5,7 +5,7 @@
       <div v-for="day in DAYS_OF_WEEK_ORDER" :key="day" class="flex flex-col items-center gap-1 min-w-0">
         <span
           class="text-[10px] font-semibold uppercase"
-          :class="selectedDay === day ? 'text-[#5f8a3a] dark:text-[#a7c49a]' : 'text-[#8a918c] dark:text-[#8e9790]'"
+          :class="selectedDay === day ? 'text-[#5f8a3a] dark:text-[#d4f65a]' : 'text-[#8a918c] dark:text-[#8e8f94]'"
         >
           {{ DAY_OF_WEEK_SHORT[day].slice(0, 3) }}
         </span>
@@ -15,8 +15,8 @@
           :key="w.id"
           type="button"
           @click="remove(w.id)"
-          class="w-full rounded-xl py-1.5 flex flex-col items-center text-white transition active:scale-95"
-          :class="w.type === 'strength' ? 'bg-[#ab9cf0]' : 'bg-[#f2b36b]'"
+          class="w-full rounded-xl py-1.5 flex flex-col items-center transition active:scale-95"
+          :class="w.type === 'strength' ? 'bg-[#7d7e84] text-white' : 'bg-[#ececee] text-[#16171a]'"
           :title="`${WORKOUT_TYPES[w.type].label} ${w.minutes} min — tocca per togliere`"
           :aria-label="`Togli ${WORKOUT_TYPES[w.type].label} ${w.minutes} minuti`"
         >
@@ -30,8 +30,8 @@
           class="w-full aspect-square max-h-10 rounded-xl flex items-center justify-center transition"
           :class="
             selectedDay === day
-              ? 'bg-[#8cc63f] text-white'
-              : 'border-2 border-dashed border-[#d6dfd1] dark:border-[#2c342e] text-[#9aa19c] hover:border-[#8cc63f] hover:text-[#8cc63f]'
+              ? 'bg-[#d4f65a] text-[#16171a]'
+              : 'border-2 border-dashed border-[#d6dfd1] dark:border-[#34353a] text-[#9aa19c] hover:border-[#d4f65a] hover:text-[#d4f65a]'
           "
           :aria-label="`Aggiungi allenamento ${DAY_OF_WEEK_LABELS[day]}`"
         >
@@ -53,7 +53,7 @@
             type="button"
             @click="draftType = type"
             class="py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition"
-            :class="draftType === type ? (type === 'strength' ? 'bg-[#ab9cf0] text-white' : 'bg-[#f2b36b] text-white') : 'bg-white dark:bg-[#1b211d] text-[#4a524c] dark:text-[#c9d1cb]'"
+            :class="draftType === type ? (type === 'strength' ? 'bg-[#7d7e84] text-white' : 'bg-[#ececee] text-[#16171a]') : 'bg-white dark:bg-[#222326] text-[#4a524c] dark:text-[#c8c9cd]'"
           >
             <component :is="TYPE_ICONS[type]" class="w-5 h-5" />
             {{ info.label }}
@@ -66,7 +66,7 @@
             type="button"
             @click="draftMinutes = m"
             class="flex-1 py-2 rounded-xl text-xs font-semibold tabular-nums transition"
-            :class="draftMinutes === m ? 'bg-[#1f2421] text-white dark:bg-white dark:text-[#1f2421]' : 'bg-white dark:bg-[#1b211d] text-[#4a524c] dark:text-[#c9d1cb]'"
+            :class="draftMinutes === m ? 'bg-[#d4f65a] text-[#16171a]' : 'bg-white dark:bg-[#222326] text-[#4a524c] dark:text-[#c8c9cd]'"
           >
             {{ m }}'
           </button>
@@ -76,7 +76,7 @@
             min="5"
             max="300"
             inputmode="numeric"
-            class="w-16 ui-input bg-white dark:bg-[#1b211d] text-xs text-center px-1 py-2"
+            class="w-16 ui-input bg-white dark:bg-[#222326] text-xs text-center px-1 py-2"
             aria-label="Minuti"
           />
         </div>
@@ -88,7 +88,7 @@
 
     <!-- Week summary -->
     <div class="flex items-center justify-between text-xs">
-      <span class="text-[#8a918c] dark:text-[#8e9790]">
+      <span class="text-[#8a918c] dark:text-[#8e8f94]">
         <template v-if="modelValue.length">
           {{ modelValue.length }} {{ modelValue.length === 1 ? 'allenamento' : 'allenamenti' }} · {{ totalHours }}
         </template>
@@ -99,8 +99,8 @@
       </span>
     </div>
     <div class="flex gap-3 text-[11px] text-[#8a918c]">
-      <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#ab9cf0]"></span>Forza</span>
-      <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#f2b36b]"></span>Cardio</span>
+      <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#7d7e84]"></span>Forza</span>
+      <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#ececee]"></span>Cardio</span>
       <span class="ml-auto">Tocca un allenamento per toglierlo</span>
     </div>
   </div>

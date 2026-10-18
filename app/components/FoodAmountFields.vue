@@ -20,7 +20,7 @@
       </select>
     </label>
     <label>
-      <span class="ui-label text-[10px] text-[#5f8a3a] dark:text-[#a7c49a]">CHO g</span>
+      <span class="ui-label text-[10px] text-[#5f8a3a] dark:text-[#d4f65a]">CHO g</span>
       <input
         type="number"
         min="0"

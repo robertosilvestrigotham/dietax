@@ -24,7 +24,7 @@
         :r="radius"
         :stroke-width="strokeWidth"
         fill="none"
-        class="stroke-[#e4eed7] dark:stroke-[#1d3320]"
+        class="stroke-[#e4eed7] dark:stroke-[#2c2d31]"
       />
 
       <!-- Active Progress Arc (Fresh lime green) -->
@@ -45,18 +45,18 @@
 
     <!-- Inside the ring: Daily Budget / Target label + big bold number -->
     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
-      <span class="text-[11px] sm:text-xs font-semibold text-[#7c9274] dark:text-[#8ea593] tracking-normal mb-0.5">
+      <span class="text-[11px] sm:text-xs font-semibold text-[#7c9274] dark:text-[#8e8f94] tracking-normal mb-0.5">
         Target Giornaliero
       </span>
       <div class="flex items-baseline justify-center">
         <span class="text-3xl sm:text-4xl font-extrabold text-[#1f2d1e] dark:text-white tracking-tight">
           {{ value }}
         </span>
-        <span class="text-sm font-semibold text-[#7c9274] dark:text-[#8ea593] ml-1">
+        <span class="text-sm font-semibold text-[#7c9274] dark:text-[#8e8f94] ml-1">
           {{ unit }}
         </span>
       </div>
-      <span class="text-[11px] font-medium text-[#849a7c] dark:text-[#809a85] mt-1">
+      <span class="text-[11px] font-medium text-[#849a7c] dark:text-[#8e8f94] mt-1">
         {{ Math.round(pct) }}% consumati
       </span>
     </div>
