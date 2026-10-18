@@ -42,7 +42,7 @@
   }
 
   .ui-input {
-    @apply w-full text-sm px-3.5 py-2.5 rounded-xl border-0 bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#d4f65a] disabled:opacity-50;
+    @apply w-full text-base px-3.5 py-2.5 rounded-xl border-0 bg-[#f1f4ef] dark:bg-[#2b2c30] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#d4f65a] disabled:opacity-50;
   }
 
   .ui-btn {

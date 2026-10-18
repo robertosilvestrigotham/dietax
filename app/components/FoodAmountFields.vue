@@ -8,12 +8,12 @@
         step="any"
         v-model.number="entry.quantity.value"
         placeholder="—"
-        class="ui-input text-xs px-2.5"
+        class="ui-input text-base px-2.5"
       />
     </label>
     <label>
       <span class="ui-label text-[10px]">Unità</span>
-      <select v-model="entry.unit.value" class="ui-input text-xs px-2">
+      <select v-model="entry.unit.value" class="ui-input text-base px-2">
         <option value="g">g</option>
         <option value="ml">ml</option>
         <option value="pz">pz</option>
@@ -27,7 +27,7 @@
         step="any"
         v-model.number="entry.cho.value"
         placeholder="0"
-        class="ui-input text-xs px-2.5 font-semibold"
+        class="ui-input text-base px-2.5 font-semibold"
       />
     </label>
     <label>
@@ -38,7 +38,7 @@
         step="any"
         v-model.number="entry.kcal.value"
         placeholder="—"
-        class="ui-input text-xs px-2.5"
+        class="ui-input text-base px-2.5"
       />
     </label>
   </div>

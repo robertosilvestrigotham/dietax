@@ -120,12 +120,12 @@
                   v-model.number="ing.quantity"
                   :disabled="ing.isToDefine"
                   placeholder="90"
-                  class="ui-input bg-white dark:bg-[#222326] text-xs"
+                  class="ui-input bg-white dark:bg-[#222326] text-base"
                 />
               </div>
               <div>
                 <label class="ui-label">Unità</label>
-                <select v-model="ing.unit" class="ui-input bg-white dark:bg-[#222326] text-xs">
+                <select v-model="ing.unit" class="ui-input bg-white dark:bg-[#222326] text-base">
                   <option value="g">g</option>
                   <option value="ml">ml</option>
                   <option value="pz">pz</option>
@@ -139,7 +139,7 @@
                   step="any"
                   v-model.number="ing.choGrams"
                   :placeholder="String(calculateIngredientCho({ ...ing, choGrams: undefined }))"
-                  class="ui-input bg-white dark:bg-[#222326] text-xs font-semibold"
+                  class="ui-input bg-white dark:bg-[#222326] text-base font-semibold"
                 />
               </div>
               <div>
@@ -149,7 +149,7 @@
                   step="any"
                   v-model.number="ing.kcal"
                   :placeholder="String(calculateIngredientKcal({ ...ing, kcal: undefined }))"
-                  class="ui-input bg-white dark:bg-[#222326] text-xs"
+                  class="ui-input bg-white dark:bg-[#222326] text-base"
                 />
               </div>
             </div>
@@ -157,7 +157,7 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="ui-label">Categoria</label>
-                <select v-model="ing.category" class="ui-input bg-white dark:bg-[#222326] text-xs">
+                <select v-model="ing.category" class="ui-input bg-white dark:bg-[#222326] text-base">
                   <option v-for="cat in INGREDIENT_CATEGORY_ORDER" :key="cat" :value="cat">
                     {{ INGREDIENT_CATEGORY_LABELS[cat] }}
                   </option>
@@ -165,7 +165,7 @@
               </div>
               <div>
                 <label class="ui-label">Stato</label>
-                <select v-model="ing.preparationState" class="ui-input bg-white dark:bg-[#222326] text-xs">
+                <select v-model="ing.preparationState" class="ui-input bg-white dark:bg-[#222326] text-base">
                   <option value="none">—</option>
                   <option value="raw">A secco / crudo</option>
                   <option value="cooked">Cotto e scolato</option>

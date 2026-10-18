@@ -76,7 +76,7 @@
             min="5"
             max="300"
             inputmode="numeric"
-            class="w-16 ui-input bg-white dark:bg-[#222326] text-xs text-center px-1 py-2"
+            class="w-16 ui-input bg-white dark:bg-[#222326] text-base text-center px-1 py-2"
             aria-label="Minuti"
           />
         </div>

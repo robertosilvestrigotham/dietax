@@ -43,11 +43,11 @@
     <div class="grid grid-cols-2 gap-2 no-print">
       <label>
         <span class="ui-label">Dal</span>
-        <input type="date" v-model="startDateKey" class="ui-input bg-white dark:bg-[#222326] text-xs" />
+        <input type="date" v-model="startDateKey" class="ui-input bg-white dark:bg-[#222326] text-base" />
       </label>
       <label>
         <span class="ui-label">Al</span>
-        <input type="date" v-model="endDateKey" class="ui-input bg-white dark:bg-[#222326] text-xs" />
+        <input type="date" v-model="endDateKey" class="ui-input bg-white dark:bg-[#222326] text-base" />
       </label>
     </div>
 

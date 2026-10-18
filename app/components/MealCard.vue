@@ -189,7 +189,7 @@
               ref="extraNameInput"
               v-model="extraEntry.name.value"
               placeholder="Cerca alimento o scrivi"
-              input-class="ui-input text-xs"
+              input-class="ui-input"
               @select="extraEntry.selectFood"
             />
             <FoodAmountFields :entry="extraEntry" />
@@ -241,7 +241,7 @@
             ref="replacementInput"
             v-model="replacementEntry.name.value"
             placeholder="Es. Canederlo"
-            input-class="ui-input text-xs"
+            input-class="ui-input"
             @select="replacementEntry.selectFood"
           />
           <FoodAmountFields :entry="replacementEntry" />

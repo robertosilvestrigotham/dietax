@@ -68,7 +68,7 @@
             <FoodSearchInput
               v-model="excludeQuery"
               placeholder="Cerca un alimento da escludere"
-              input-class="ui-input text-xs"
+              input-class="ui-input"
               @select="addExcluded"
             />
           </div>
