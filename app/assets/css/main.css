@@ -5,6 +5,8 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* Always reserve the scrollbar space: short pages (Registro) must not shift the fixed nav */
+    scrollbar-gutter: stable;
   }
 
   .dark {
