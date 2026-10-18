@@ -21,7 +21,7 @@
               {{ day.label }}
             </div>
             <div class="text-xs mt-0.5 text-[#8a918c] dark:text-[#8e9790] tabular-nums">
-              {{ day.completed }}/{{ day.total }} pasti
+              {{ day.completed }}/{{ day.total }} pasti · {{ day.consumedKcal }} kcal
               <span v-if="day.extraCho > 0"> · +{{ day.extraCho }}g extra</span>
             </div>
           </div>
@@ -41,8 +41,8 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMealStore } from '~/stores/mealStore'
 import { useCurrentDate } from '~/composables/useCurrentDate'
-import { formatItalianDate, getDayOfWeekFromDate } from '~/utils/date'
-import { calculateDayCho, calculatePlanAdherence } from '~/utils/nutrition'
+import { formatItalianDate } from '~/utils/date'
+import { calculateDayCho, calculateDayKcal, calculatePlanAdherence } from '~/utils/nutrition'
 import AppleActivityRings from '~/components/AppleActivityRings.vue'
 
 const mealStore = useMealStore()
@@ -52,8 +52,8 @@ const { setDate } = useCurrentDate()
 // Same palette as the day summary rings
 const COLORS = {
   cho: '#8cc63f',
+  kcal: '#f2b36b',
   meals: '#ab9cf0',
-  adherence: '#8fc8f2',
 }
 
 const days = computed(() =>
@@ -62,10 +62,13 @@ const days = computed(() =>
       const stats = mealStore.getDayCompletionStats(dateKey)
       if (stats.completed === 0) return null
 
-      const dayPlan = mealStore.getDayPlan(getDayOfWeekFromDate(dateKey))
+      const dayPlan = mealStore.getDayPlanForDate(dateKey)
       const dayProgress = mealStore.getDayProgressForDate(dateKey)
       const cho = calculateDayCho({ dayPlan, dayProgress })
       const adherence = calculatePlanAdherence({ dayPlan, dayProgress })
+      const kcal = calculateDayKcal({ dayPlan, dayProgress })
+      const kcalGoal = mealStore.preferences.kcalGoal ?? kcal.totalKcal
+      const kcalPct = kcalGoal ? Math.min(100, Math.round((kcal.consumedKcal / kcalGoal) * 100)) : 0
       const choPct = cho.totalCho ? Math.min(100, Math.round((cho.consumedCho / cho.totalCho) * 100)) : 0
 
       return {
@@ -74,12 +77,13 @@ const days = computed(() =>
         completed: stats.completed,
         total: stats.total,
         consumedCho: Math.round(cho.consumedCho),
+        consumedKcal: kcal.consumedKcal,
         totalCho: Math.round(cho.totalCho),
         extraCho: adherence.totalExtraCho,
         rings: [
           { key: 'cho', pct: choPct, color: COLORS.cho },
+          { key: 'kcal', pct: kcalPct, color: COLORS.kcal },
           { key: 'meals', pct: stats.percentage, color: COLORS.meals },
-          { key: 'adherence', pct: adherence.adherencePercentage, color: COLORS.adherence },
         ],
       }
     })

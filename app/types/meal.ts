@@ -24,6 +24,7 @@ export interface ExtraFoodItem {
   quantity?: number | null
   unit?: FoodUnit
   choGrams: number
+  kcal?: number
   notes?: string
   createdAt?: string
 }
@@ -40,6 +41,7 @@ export interface Ingredient {
   notes?: string
   choPer100g?: number // Carbohydrates in grams per 100g (or 100ml, or per piece if unit is 'pz')
   choGrams?: number // Direct CHO value in grams
+  kcal?: number // Direct kcal value; when missing it is estimated from the built-in food table
 }
 
 export interface MealAlternative {
@@ -62,6 +64,8 @@ export interface Meal {
   selectedAlternativeId?: string
   imageUrl?: string
   estimatedCho?: number // Override CHO when ingredients are not specified or for out-of-home meals
+  estimatedKcal?: number // Same, for calories
+  dishId?: string // Set when the meal comes from the dish library (menu generator)
 }
 
 export type DayPlan = Record<MealSlot, Meal>
@@ -74,12 +78,14 @@ export interface MealSnapshot {
   description: string
   ingredientsSummary: string
   isOut: boolean
+  meal?: Meal // Full copy of the planned meal at confirmation time (freezes history)
 }
 
 /** A meal eaten instead of the planned one, for a single date only */
 export interface MealReplacement {
   description: string
   choGrams: number
+  kcal?: number
   replacedAt: string // ISO timestamp
 }
 
@@ -138,6 +144,44 @@ export type ThemePreference = 'light' | 'dark' | 'system'
 export interface AppPreferences {
   theme: ThemePreference
   autoScrollToCurrentMeal: boolean
+  kcalGoal: number | null // Daily calorie goal; null = use the planned calories of the day
+  excludedFoods?: string[] // Food ids the menu generator must never use
+}
+
+// ─── Profile & body measurements ────────────────────────────────────────────
+export type Sex = 'male' | 'female'
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active'
+export type Lifestyle = 'sedentary' | 'standing' | 'physical' // daily movement, workouts excluded
+export type WorkoutType = 'strength' | 'cardio'
+
+export interface Workout {
+  id: string
+  day: DayOfWeek
+  type: WorkoutType
+  minutes: number
+}
+export type WeightGoal = 'lose' | 'maintain' | 'gain'
+
+export interface BodyMeasurement {
+  date: string // YYYY-MM-DD
+  weightKg: number
+  waistCm?: number
+  hipsCm?: number
+  chestCm?: number
+  armCm?: number
+  thighCm?: number
+}
+
+export interface UserProfile {
+  sex: Sex
+  birthYear: number
+  heightCm: number
+  activity?: ActivityLevel // legacy: generic level, used only when lifestyle is missing
+  lifestyle?: Lifestyle
+  workouts?: Workout[]
+  goal: WeightGoal
+  measurements: BodyMeasurement[] // oldest first; the last one is the current state
+  autoKcalGoal: boolean // keep the calorie goal in sync with the computed target
 }
 
 export interface AppExportData {
@@ -148,6 +192,8 @@ export interface AppExportData {
   shoppingStates: Record<string, WeekShoppingState>
   pantryItems: string[] // canonicalIds marked as constantly in pantry
   preferences: AppPreferences
+  profile?: UserProfile | null
+  onboardingDismissed?: boolean
 }
 
 export const MEAL_SLOT_LABELS: Record<MealSlot, string> = {

@@ -1,6 +1,7 @@
 <template>
   <div class="space-y-6 max-w-5xl mx-auto">
-    <!-- View switcher -->
+    <!-- View switcher + menu generator -->
+    <div class="flex items-center justify-between gap-2">
     <div class="ui-segment">
       <button
         type="button"
@@ -16,6 +17,11 @@
       >
         Panoramica
       </button>
+    </div>
+    <button type="button" @click="openMenuGenerator" class="ui-btn bg-[#8cc63f] hover:bg-[#7db536] text-white dark:bg-[#8cc63f] dark:text-white">
+      <ChefHat class="w-4 h-4" />
+      Nuovo menù
+    </button>
     </div>
 
     <!-- Days Selector Bar with Day CHO (always fits the width, no overlap) -->
@@ -46,7 +52,7 @@
           class="text-[10px] sm:text-[11px] font-medium tabular-nums truncate max-w-full"
           :class="activeDayOfWeek === day.dayOfWeek ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
         >
-          {{ Math.round(getDayTotalCho(day.dayOfWeek)) }}g
+          {{ Math.round(getDateTotalCho(day.dateKey)) }}g
         </span>
       </button>
     </div>
@@ -57,8 +63,9 @@
         <h2 class="text-lg font-bold text-[#1f2421] dark:text-white capitalize">
           {{ DAY_OF_WEEK_LABELS[activeDayOfWeek] }}
         </h2>
-        <span class="text-sm font-semibold tabular-nums text-[#5f8a3a] dark:text-[#a7c49a]">
-          {{ Math.round(getDayTotalCho(activeDayOfWeek)) }}g CHO
+        <span class="text-sm tabular-nums">
+          <span class="font-semibold text-[#5f8a3a] dark:text-[#a7c49a]">{{ Math.round(getDayTotalCho(activeDayOfWeek)) }}g CHO</span>
+          <span class="text-[#8a918c] dark:text-[#8e9790]"> · {{ getDayTotalKcal(activeDayOfWeek) }} kcal</span>
         </span>
       </div>
 
@@ -102,7 +109,7 @@
             class="text-[11px] font-medium tabular-nums"
             :class="day.isToday ? 'text-white/85' : 'text-[#8a918c] dark:text-[#8e9790]'"
           >
-            {{ Math.round(getDayTotalCho(day.dayOfWeek)) }}g
+            {{ Math.round(getDateTotalCho(day.dateKey)) }}g
           </span>
         </button>
 
@@ -110,7 +117,7 @@
           <li v-for="slot in MEAL_SLOT_ORDER" :key="`${day.dayOfWeek}-${slot}`">
             <button
               type="button"
-              @click="openEditModalForDay(day.dayOfWeek, mealStore.plan[day.dayOfWeek][slot])"
+              @click="openEditModalForDay(day.dayOfWeek, datedPlan(day.dateKey)[slot])"
               :disabled="getSlotState(day.dateKey, day.isToday, slot) === 'done' || isPast(day.dateKey)"
               class="w-full flex items-center gap-2.5 py-1.5 px-1.5 rounded-xl text-left hover:bg-[#f1f4ef] dark:hover:bg-[#18221b] transition disabled:pointer-events-none"
             >
@@ -123,14 +130,14 @@
               <span class="flex-1 min-w-0">
                 <span class="block text-xs font-semibold text-[#1f2421] dark:text-white">
                   {{ MEAL_SLOT_LABELS[slot] }}
-                  <span v-if="mealStore.plan[day.dayOfWeek][slot].isOut" class="font-medium text-amber-700 dark:text-amber-300"> · Fuori casa</span>
+                  <span v-if="datedPlan(day.dateKey)[slot].isOut" class="font-medium text-amber-700 dark:text-amber-300"> · Fuori casa</span>
                 </span>
                 <span class="block text-xs text-[#8a918c] dark:text-[#8e9790] truncate">
-                  {{ mealStore.plan[day.dayOfWeek][slot].description }}
+                  {{ datedPlan(day.dateKey)[slot].description }}
                 </span>
               </span>
               <span class="text-xs tabular-nums text-[#8a918c] dark:text-[#8e9790] flex-shrink-0">
-                {{ Math.round(getMealChoValue(mealStore.plan[day.dayOfWeek][slot])) }}g
+                {{ Math.round(getMealChoValue(datedPlan(day.dateKey)[slot])) }}g
               </span>
             </button>
           </li>
@@ -150,6 +157,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { PhChefHat as ChefHat } from '@phosphor-icons/vue'
+import { useProfileUi } from '~/composables/useProfileUi'
 import type { DayOfWeek, Meal, MealSlot } from '~/types/meal'
 import {
   DAY_OF_WEEK_LABELS,
@@ -160,9 +169,10 @@ import {
 import { useMealStore } from '~/stores/mealStore'
 import { getDaysAround, formatDateKey, getDayOfWeekFromDate } from '~/utils/date'
 import { MEAL_SLOT_ICONS } from '~/utils/mealIcons'
-import { calculateMealCho, calculateDayCho } from '~/utils/nutrition'
+import { calculateMealCho, calculateDayCho, calculateDayKcal } from '~/utils/nutrition'
 
 const mealStore = useMealStore()
+const { openMenuGenerator } = useProfileUi()
 
 const viewMode = ref<'single' | 'all'>('single')
 const activeDateKey = ref<string>(formatDateKey(new Date()))
@@ -176,6 +186,14 @@ const weekDays = computed(() => getDaysAround(new Date(), PAST_DAYS, FUTURE_DAYS
 const getDayTotalCho = (day: DayOfWeek): number => {
   const dayPlan = mealStore.getDayPlan(day)
   return calculateDayCho({ dayPlan }).totalCho
+}
+
+// Real dates (overview, tiles): confirmed meals use their frozen copy
+const datedPlan = (dateKey: string) => mealStore.getDayPlanForDate(dateKey)
+const getDateTotalCho = (dateKey: string): number => calculateDayCho({ dayPlan: datedPlan(dateKey) }).totalCho
+
+const getDayTotalKcal = (day: DayOfWeek): number => {
+  return calculateDayKcal({ dayPlan: mealStore.getDayPlan(day) }).totalKcal
 }
 
 const getMealChoValue = (meal: Meal): number => {

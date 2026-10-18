@@ -84,7 +84,16 @@
   }
 
   .ui-modal {
-    @apply w-full bg-[#e5ede2] dark:bg-[#0c1610] rounded-t-[28px] sm:rounded-[28px] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden;
+    @apply w-full bg-[#e5ede2] dark:bg-[#0c1610] rounded-t-[28px] sm:rounded-[28px] shadow-2xl flex flex-col max-h-[92vh] max-h-[92dvh] overflow-hidden;
+  }
+
+  /* Header and footer keep their size; only the body scrolls (min-h-0 lets it shrink) */
+  .ui-modal > * {
+    @apply flex-shrink-0;
+  }
+
+  .ui-modal > .ui-modal-body {
+    @apply flex-1 min-h-0 overflow-y-auto overscroll-contain flex-shrink;
   }
 }
 

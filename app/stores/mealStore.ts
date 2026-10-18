@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type {
   AppExportData,
   AppPreferences,
+  BodyMeasurement,
   DayOfWeek,
   DayProgress,
   ExtraFoodItem,
@@ -9,13 +10,17 @@ import type {
   ManualShoppingItem,
   Meal,
   MealSlot,
+  UserProfile,
   WeeklyPlan,
   WeekShoppingState,
 } from '~/types/meal'
 import { createSeedWeeklyPlan } from '~/data/seedMenu'
 import { getDayOfWeekFromDate } from '~/utils/date'
+import { summarizeProfile } from '~/utils/body'
 
 const STORAGE_KEY = 'dietax_state_v1'
+// Previous weekly plan, kept so an automatic plan adaptation can be undone
+const PLAN_BACKUP_KEY = 'dietax_plan_backup_v1'
 const SCHEMA_VERSION = 1
 
 interface MealStoreState {
@@ -25,6 +30,9 @@ interface MealStoreState {
   shoppingStates: Record<string, WeekShoppingState>
   globalPantry: string[]
   preferences: AppPreferences
+  profile: UserProfile | null
+  onboardingDismissed: boolean
+  planBackup: WeeklyPlan | null
   isHydrated: boolean
 }
 
@@ -38,13 +46,36 @@ export const useMealStore = defineStore('meal', {
     preferences: {
       theme: 'system',
       autoScrollToCurrentMeal: true,
+      kcalGoal: null,
+      excludedFoods: [],
     },
+    profile: null,
+    onboardingDismissed: false,
+    planBackup: null,
     isHydrated: false,
   }),
 
   getters: {
     getDayPlan: (state) => {
       return (dayOfWeek: DayOfWeek) => state.plan[dayOfWeek]
+    },
+
+    /**
+     * The meals of a real date: the weekly template, except confirmed meals,
+     * which use the copy saved at confirmation so later plan edits don't rewrite history.
+     */
+    getDayPlanForDate: (state) => {
+      return (dateKey: string): Record<MealSlot, Meal> => {
+        const template = state.plan[getDayOfWeekFromDate(dateKey)]
+        const prog = state.progress[dateKey]
+        if (!prog?.mealSnapshots) return template
+        const result = { ...template }
+        for (const slot of Object.keys(template) as MealSlot[]) {
+          const frozen = prog.completedMeals[slot] ? prog.mealSnapshots[slot]?.meal : undefined
+          if (frozen) result[slot] = frozen
+        }
+        return result
+      }
     },
 
     getMealForDate: (state) => {
@@ -141,8 +172,12 @@ export const useMealStore = defineStore('meal', {
             if (parsed.preferences) {
               this.preferences = { ...this.preferences, ...parsed.preferences }
             }
+            this.profile = parsed.profile ?? null
+            this.onboardingDismissed = Boolean(parsed.onboardingDismissed)
           }
         }
+        const backup = window.localStorage.getItem(PLAN_BACKUP_KEY)
+        this.planBackup = backup ? (JSON.parse(backup) as WeeklyPlan) : null
       } catch (err) {
         console.error('Failed to load DietaX state from localStorage:', err)
       } finally {
@@ -162,6 +197,8 @@ export const useMealStore = defineStore('meal', {
           shoppingStates: this.shoppingStates,
           pantryItems: this.globalPantry,
           preferences: this.preferences,
+          profile: this.profile,
+          onboardingDismissed: this.onboardingDismissed,
         }
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
       } catch (err) {
@@ -247,6 +284,7 @@ export const useMealStore = defineStore('meal', {
           if (updates.quantity !== undefined) item.quantity = updates.quantity
           if (updates.unit !== undefined) item.unit = updates.unit
           if (updates.choGrams !== undefined) item.choGrams = updates.choGrams
+          if (updates.kcal !== undefined) item.kcal = updates.kcal
           if (updates.notes !== undefined) item.notes = updates.notes
           this.saveToStorage()
         }
@@ -279,6 +317,7 @@ export const useMealStore = defineStore('meal', {
             mealId: templateMeal.id,
             name: templateMeal.name,
             description: replacement?.description ?? templateMeal.description,
+            meal: JSON.parse(JSON.stringify(templateMeal)) as Meal,
             ingredientsSummary: ingSummary,
             isOut: templateMeal.isOut,
           }
@@ -290,11 +329,16 @@ export const useMealStore = defineStore('meal', {
       this.saveToStorage()
     },
 
-    setMealReplacement(dateKey: string, slot: MealSlot, data: { description: string; choGrams: number }) {
+    setMealReplacement(
+      dateKey: string,
+      slot: MealSlot,
+      data: { description: string; choGrams: number; kcal?: number }
+    ) {
       const prog = this.ensureDayProgress(dateKey)
       prog.replacements![slot] = {
         description: data.description,
         choGrams: data.choGrams,
+        kcal: data.kcal,
         replacedAt: new Date().toISOString(),
       }
       this.saveToStorage()
@@ -426,6 +470,71 @@ export const useMealStore = defineStore('meal', {
       this.saveToStorage()
     },
 
+    /** Saves the profile; with autoKcalGoal the calorie goal follows the computed target */
+    saveProfile(profile: UserProfile) {
+      this.profile = profile
+      this.onboardingDismissed = true
+      this.syncKcalGoalWithProfile()
+      this.saveToStorage()
+    },
+
+    /** Adds (or replaces, same date) a body measurement */
+    addMeasurement(measurement: BodyMeasurement) {
+      if (!this.profile) return
+      const others = this.profile.measurements.filter((m) => m.date !== measurement.date)
+      this.profile.measurements = [...others, measurement].sort((a, b) => a.date.localeCompare(b.date))
+      this.syncKcalGoalWithProfile()
+      this.saveToStorage()
+    },
+
+    syncKcalGoalWithProfile() {
+      if (!this.profile?.autoKcalGoal) return
+      const summary = summarizeProfile(this.profile)
+      if (summary) this.preferences.kcalGoal = summary.targetKcal
+    },
+
+    /** Replaces the weekly plan (e.g. adapted to the calorie goal), keeping the old one for undo */
+    applyPlan(newPlan: WeeklyPlan) {
+      this.planBackup = JSON.parse(JSON.stringify(this.plan)) as WeeklyPlan
+      this.plan = newPlan
+      this.persistPlanBackup()
+      this.saveToStorage()
+    },
+
+    restorePlanBackup() {
+      if (!this.planBackup) return
+      this.plan = this.planBackup
+      this.planBackup = null
+      this.persistPlanBackup()
+      this.saveToStorage()
+    },
+
+    persistPlanBackup() {
+      if (typeof window === 'undefined') return
+      try {
+        if (this.planBackup) window.localStorage.setItem(PLAN_BACKUP_KEY, JSON.stringify(this.planBackup))
+        else window.localStorage.removeItem(PLAN_BACKUP_KEY)
+      } catch (err) {
+        console.error('Failed to save plan backup:', err)
+      }
+    },
+
+    dismissOnboarding() {
+      this.onboardingDismissed = true
+      this.saveToStorage()
+    },
+
+    setExcludedFoods(foodIds: string[]) {
+      this.preferences.excludedFoods = [...new Set(foodIds)]
+      this.saveToStorage()
+    },
+
+    setKcalGoal(kcal: number | null) {
+      this.preferences.kcalGoal = kcal && kcal > 0 ? Math.round(kcal) : null
+      if (this.profile) this.profile.autoKcalGoal = false
+      this.saveToStorage()
+    },
+
     exportData(): AppExportData {
       return {
         version: this.version,
@@ -435,6 +544,8 @@ export const useMealStore = defineStore('meal', {
         shoppingStates: this.shoppingStates,
         pantryItems: this.globalPantry,
         preferences: this.preferences,
+        profile: this.profile,
+        onboardingDismissed: this.onboardingDismissed,
       }
     },
 
@@ -455,6 +566,8 @@ export const useMealStore = defineStore('meal', {
         if (data.preferences) {
           this.preferences = { ...this.preferences, ...data.preferences }
         }
+        if (data.profile !== undefined) this.profile = data.profile
+        if (data.onboardingDismissed !== undefined) this.onboardingDismissed = data.onboardingDismissed
         this.saveToStorage()
         return { success: true }
       } catch (err: unknown) {

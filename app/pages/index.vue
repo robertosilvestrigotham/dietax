@@ -34,6 +34,23 @@
     <!-- Day Progress & CHO Summary Card -->
     <DayProgressSummary :date-key="selectedDateKey" />
 
+    <!-- Every 2 weeks: ask to update weight and measurements -->
+    <button
+      v-if="isCurrentDateToday && measurementDue"
+      type="button"
+      @click="openMeasurement"
+      class="w-full ui-card p-4 flex items-center gap-3 text-left hover:bg-[#fafbf9] dark:hover:bg-[#202722] transition"
+    >
+      <span class="w-10 h-10 rounded-full bg-[#f2b36b] text-white flex items-center justify-center flex-shrink-0">
+        <Scales class="w-5 h-5" />
+      </span>
+      <span class="flex-1 min-w-0">
+        <span class="block text-sm font-semibold text-[#1f2421] dark:text-white">È ora di aggiornare peso e misure</span>
+        <span class="block ui-muted">Ultima misurazione {{ daysSinceMeasurement }} giorni fa</span>
+      </span>
+      <CaretRight class="w-4 h-4 text-[#9aa19c] flex-shrink-0" />
+    </button>
+
     <!-- Meal Slots -->
     <div class="space-y-4">
       <!-- Celebratory banner if all 5 completed -->
@@ -85,7 +102,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { PhConfetti as Confetti, PhLightbulb as Lightbulb } from '@phosphor-icons/vue'
+import { PhConfetti as Confetti, PhLightbulb as Lightbulb, PhScales as Scales, PhCaretRight as CaretRight } from '@phosphor-icons/vue'
+import { useProfileUi } from '~/composables/useProfileUi'
+import { isMeasurementDue, daysSinceLastMeasurement } from '~/utils/body'
 import DayNotesCard from '~/components/DayNotesCard.vue'
 import { MEAL_SLOT_ORDER } from '~/types/meal'
 import type { Meal, MealSlot } from '~/types/meal'
@@ -93,6 +112,10 @@ import { useMealStore } from '~/stores/mealStore'
 import { useCurrentDate } from '~/composables/useCurrentDate'
 
 const mealStore = useMealStore()
+const { openMeasurement } = useProfileUi()
+
+const measurementDue = computed(() => isMeasurementDue(mealStore.profile))
+const daysSinceMeasurement = computed(() => daysSinceLastMeasurement(mealStore.profile))
 const {
   selectedDateKey,
   selectedDayOfWeek,
@@ -121,7 +144,7 @@ const isEditModalOpen = ref(false)
 const editingMeal = ref<Meal | null>(null)
 
 const getMeal = (slot: MealSlot): Meal => {
-  const dayPlan = mealStore.getDayPlan(selectedDayOfWeek.value)
+  const dayPlan = mealStore.getDayPlanForDate(selectedDateKey.value)
   return dayPlan[slot]
 }
 

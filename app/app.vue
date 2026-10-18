@@ -19,6 +19,12 @@
 
     <!-- Mobile Bottom Navigation for iPhone -->
     <MobileBottomNav class="no-print" />
+
+    <!-- Profile: first-run onboarding and the 2-week measurements update -->
+    <OnboardingSheet v-if="isOnboardingOpen" />
+    <MeasurementSheet v-if="isMeasurementOpen" />
+    <PlanScalingSheet v-if="isPlanScalingOpen" />
+    <MenuGeneratorSheet v-if="isMenuGeneratorOpen" />
   </div>
 </template>
 
@@ -27,6 +33,7 @@ import { computed, onMounted, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMealStore } from '~/stores/mealStore'
 import { useTheme } from '~/composables/useTheme'
+import { useProfileUi } from '~/composables/useProfileUi'
 import { getDaysAround, formatWeekRange } from '~/utils/date'
 
 // Phosphor icons: duotone everywhere unless a component overrides `weight`
@@ -34,12 +41,15 @@ provide('weight', 'duotone')
 
 const route = useRoute()
 const mealStore = useMealStore()
+const { isOnboardingOpen, isMeasurementOpen, isPlanScalingOpen, isMenuGeneratorOpen, openOnboarding } = useProfileUi()
 
 // Initialize theme and store on client mount
 useTheme()
 
 onMounted(() => {
   mealStore.initFromStorage()
+  // First run: ask for the profile (can be skipped and done later from Opzioni)
+  if (!mealStore.profile && !mealStore.onboardingDismissed) openOnboarding()
 })
 
 const pageTitle = computed(() => {

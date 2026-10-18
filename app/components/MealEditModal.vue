@@ -15,7 +15,7 @@
       </div>
 
       <!-- Body -->
-      <div class="flex-1 overflow-y-auto px-5 pb-5 space-y-3">
+      <div class="ui-modal-body px-5 pb-5 space-y-3">
         <!-- Main fields -->
         <div class="ui-card space-y-3">
           <div>
@@ -56,9 +56,20 @@
               ></span>
             </span>
           </label>
-          <div v-if="formMeal.isOut">
-            <label class="ui-label">CHO stimati (g)</label>
-            <input type="number" v-model.number="formMeal.estimatedCho" placeholder="Es. 60" class="ui-input" />
+          <div v-if="formMeal.isOut" class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="ui-label">CHO stimati (g)</label>
+              <input type="number" v-model.number="formMeal.estimatedCho" placeholder="Es. 60" class="ui-input" />
+            </div>
+            <div>
+              <label class="ui-label">Kcal stimate</label>
+              <input
+                type="number"
+                v-model.number="formMeal.estimatedKcal"
+                :placeholder="formMeal.estimatedCho ? String(Math.round(formMeal.estimatedCho * 8)) : 'Es. 600'"
+                class="ui-input"
+              />
+            </div>
           </div>
         </div>
 
@@ -84,11 +95,12 @@
             class="ui-panel p-3 space-y-2"
           >
             <div class="flex items-center gap-2">
-              <input
-                type="text"
+              <FoodSearchInput
                 v-model="ing.name"
-                placeholder="Alimento"
-                class="ui-input bg-white dark:bg-[#1b211d] font-medium"
+                placeholder="Cerca alimento"
+                input-class="ui-input bg-white dark:bg-[#1b211d] font-medium"
+                class="flex-1 min-w-0"
+                @select="(food) => applyFood(ing, food)"
               />
               <button
                 type="button"
@@ -100,7 +112,7 @@
               </button>
             </div>
 
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-4 gap-1.5">
               <div>
                 <label class="ui-label">Quantità</label>
                 <input
@@ -124,9 +136,20 @@
                 <label class="ui-label text-[#5f8a3a] dark:text-[#a7c49a]">CHO (g)</label>
                 <input
                   type="number"
+                  step="any"
                   v-model.number="ing.choGrams"
-                  placeholder="65"
+                  :placeholder="String(calculateIngredientCho({ ...ing, choGrams: undefined }))"
                   class="ui-input bg-white dark:bg-[#1b211d] text-xs font-semibold"
+                />
+              </div>
+              <div>
+                <label class="ui-label">Kcal</label>
+                <input
+                  type="number"
+                  step="any"
+                  v-model.number="ing.kcal"
+                  :placeholder="String(calculateIngredientKcal({ ...ing, kcal: undefined }))"
+                  class="ui-input bg-white dark:bg-[#1b211d] text-xs"
                 />
               </div>
             </div>
@@ -177,6 +200,9 @@
 import { ref, watch } from 'vue'
 import { PhX as X, PhPlus as Plus, PhTrash as Trash2 } from '@phosphor-icons/vue'
 import type { DayOfWeek, Ingredient, Meal } from '~/types/meal'
+import { calculateIngredientCho, calculateIngredientKcal } from '~/utils/nutrition'
+import { defaultFoodQuantity, type FoodItem } from '~/data/foods'
+import FoodSearchInput from '~/components/FoodSearchInput.vue'
 import {
   MEAL_SLOT_LABELS,
   DAY_OF_WEEK_LABELS,
@@ -226,6 +252,23 @@ const handleToDefineChange = (ing: Ingredient) => {
   }
 }
 
+// Picking a food from the table fills id, category, unit and per-100g values;
+// CHO/kcal fields are cleared so they are computed from quantity (empty field = computed value)
+const applyFood = (ing: Ingredient, food: FoodItem) => {
+  ing.canonicalId = food.id
+  ing.category = food.category
+  if (ing.unit !== food.unit && ing.unit !== 'qb') {
+    ing.unit = food.unit
+    ing.quantity = defaultFoodQuantity(food)
+  }
+  if (ing.quantity === null && ing.unit !== 'qb') ing.quantity = defaultFoodQuantity(food)
+  // For pieces, choPer100g holds the CHO of one piece (see calculateIngredientCho)
+  ing.choPer100g =
+    food.unit === 'pz' ? Math.round(((food.choPer100g * (food.gramsPerPiece ?? 100)) / 100) * 10) / 10 : food.choPer100g
+  delete ing.choGrams
+  delete ing.kcal
+}
+
 const addIngredient = () => {
   const newIng: Ingredient = {
     id: `ing-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -235,7 +278,6 @@ const addIngredient = () => {
     unit: 'g',
     category: 'carb',
     preparationState: 'none',
-    choGrams: 0,
   }
   formMeal.value.ingredients.push(newIng)
 }

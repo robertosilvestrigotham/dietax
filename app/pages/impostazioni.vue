@@ -1,5 +1,135 @@
 <template>
   <div class="space-y-4 max-w-3xl mx-auto">
+    <!-- Profile -->
+    <section class="ui-card space-y-3">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="ui-title">Profilo</h2>
+        <button v-if="mealStore.profile" type="button" @click="openOnboarding" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+          Modifica
+        </button>
+      </div>
+
+      <template v-if="mealStore.profile && profileSummary">
+        <div class="grid grid-cols-3 gap-2">
+          <div v-for="tile in profileTiles" :key="tile.label" class="ui-panel p-3">
+            <component :is="tile.icon" class="w-5 h-5" :class="tile.iconClass" />
+            <div class="mt-1.5 text-lg font-bold tabular-nums text-[#1f2421] dark:text-white leading-tight">{{ tile.value }}</div>
+            <div class="text-[11px] text-[#8a918c] dark:text-[#8e9790] truncate">{{ tile.label }}</div>
+          </div>
+        </div>
+
+        <div class="ui-panel p-3">
+          <BmiScale :bmi="profileSummary.bmi" />
+        </div>
+
+        <div v-if="mealStore.profile.measurements.length >= 2" class="pt-1">
+          <WeightTrend :measurements="mealStore.profile.measurements" />
+        </div>
+        <p class="ui-muted">
+          {{ mealStore.profile.sex === 'male' ? 'Uomo' : 'Donna' }}, {{ profileSummary.age }} anni,
+          {{ mealStore.profile.heightCm }} cm · {{ movementLabel }} ·
+          {{ WEIGHT_GOALS[mealStore.profile.goal].label }}
+          <template v-if="profileSummary.waistToHeight"> · vita/altezza {{ profileSummary.waistToHeight }}</template>
+        </p>
+
+        <!-- Measurement history (latest first) -->
+        <ul class="divide-y divide-[#eef1ec] dark:divide-[#232a25]">
+          <li
+            v-for="(m, i) in measurementHistory"
+            :key="m.date"
+            class="py-2 flex items-center justify-between gap-3 text-xs tabular-nums"
+          >
+            <span class="text-[#8a918c] dark:text-[#8e9790] w-20 flex-shrink-0">{{ formatDay(m.date) }}</span>
+            <span class="flex-1 text-[#4a524c] dark:text-[#c9d1cb] truncate">
+              <template v-if="m.waistCm">vita {{ m.waistCm }}</template>
+              <template v-if="m.hipsCm"> · fianchi {{ m.hipsCm }}</template>
+            </span>
+            <span class="font-semibold text-[#1f2421] dark:text-white">{{ m.weightKg }} kg</span>
+            <span
+              v-if="measurementHistory[i + 1]"
+              class="w-12 text-right"
+              :class="m.weightKg <= measurementHistory[i + 1]!.weightKg ? 'text-[#5f8a3a] dark:text-[#a7c49a]' : 'text-[#c07a2c]'"
+            >
+              {{ formatDelta(m.weightKg - measurementHistory[i + 1]!.weightKg) }}
+            </span>
+            <span v-else class="w-12"></span>
+          </li>
+        </ul>
+
+        <div class="flex flex-wrap gap-2">
+          <button type="button" @click="openMeasurement" class="ui-btn-primary py-2 text-xs">
+            <Scales class="w-4 h-4" />
+            Aggiorna misure
+          </button>
+          <button type="button" @click="downloadMeasurementReminder" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+            <CalendarPlus class="w-4 h-4" />
+            Promemoria nel calendario
+          </button>
+        </div>
+      </template>
+
+      <template v-else>
+        <p class="ui-muted">Sesso, età, altezza, peso e misure per calcolare il tuo obiettivo calorie.</p>
+        <button type="button" @click="openOnboarding" class="ui-btn-primary py-2 text-xs">
+          <UserCircle class="w-4 h-4" />
+          Configura profilo
+        </button>
+      </template>
+    </section>
+
+    <!-- Goals -->
+    <section class="ui-card space-y-3">
+      <div>
+        <h2 class="ui-title">Obiettivo calorie</h2>
+        <p v-if="mealStore.profile?.autoKcalGoal" class="ui-muted mt-0.5">
+          Calcolato dal profilo: si aggiorna quando cambi peso o misure. Se lo modifichi diventa manuale.
+        </p>
+        <p v-else class="ui-muted mt-0.5">
+          Lascia vuoto per usare le calorie del piano (oggi {{ todayPlannedKcal }} kcal).
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          min="0"
+          step="50"
+          inputmode="numeric"
+          :value="mealStore.preferences.kcalGoal ?? ''"
+          @change="onKcalGoalChange"
+          :placeholder="String(todayPlannedKcal)"
+          class="ui-input max-w-[10rem] font-semibold"
+        />
+        <span class="text-sm text-[#8a918c] dark:text-[#8e9790]">kcal al giorno</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" @click="openPlanScaling" class="ui-btn-primary py-2 text-xs">
+          <MagicWand class="w-4 h-4" />
+          Adatta il menù all'obiettivo
+        </button>
+        <button type="button" @click="openMenuGenerator" class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]">
+          <ChefHat class="w-4 h-4" />
+          Genera un nuovo menù
+        </button>
+        <button
+          v-if="mealStore.planBackup"
+          type="button"
+          @click="mealStore.restorePlanBackup()"
+          class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]"
+        >
+          <ArrowCounterClockwise class="w-4 h-4" />
+          Ripristina menù precedente
+        </button>
+      </div>
+      <button
+        v-if="mealStore.profile && profileSummary && !mealStore.profile.autoKcalGoal"
+        type="button"
+        @click="useProfileGoal"
+        class="ui-chip bg-[#f1f4ef] dark:bg-[#18221b]"
+      >
+        Usa l'obiettivo del profilo ({{ profileSummary.targetKcal }} kcal)
+      </button>
+    </section>
+
     <!-- Theme -->
     <section class="ui-card space-y-3">
       <h2 class="ui-title">Aspetto</h2>
@@ -122,15 +252,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { PhSun as Sun, PhMoon as Moon, PhDeviceMobile as DeviceMobile, PhDownloadSimple as Download, PhUploadSimple as Upload, PhCheck as Check, PhWarningCircle as AlertCircle, PhInfo as Info } from '@phosphor-icons/vue'
+import { ref, computed } from 'vue'
+import { PhChefHat as ChefHat, PhMagicWand as MagicWand, PhArrowCounterClockwise as ArrowCounterClockwise, PhFire as Fire, PhHeartbeat as Heartbeat, PhScales as Scales, PhCalendarPlus as CalendarPlus, PhUserCircle as UserCircle, PhSun as Sun, PhMoon as Moon, PhDeviceMobile as DeviceMobile, PhDownloadSimple as Download, PhUploadSimple as Upload, PhCheck as Check, PhWarningCircle as AlertCircle, PhInfo as Info } from '@phosphor-icons/vue'
 import { useMealStore } from '~/stores/mealStore'
 import { useTheme } from '~/composables/useTheme'
-import { formatDateKey } from '~/utils/date'
+import { formatDateKey, getDayOfWeekFromDate, parseDateKey } from '~/utils/date'
+import { calculateDayKcal } from '~/utils/nutrition'
+import BmiScale from '~/components/BmiScale.vue'
+import WeightTrend from '~/components/WeightTrend.vue'
+import { useProfileUi } from '~/composables/useProfileUi'
+import { ACTIVITY_LEVELS, LIFESTYLES, WEIGHT_GOALS, summarizeProfile } from '~/utils/body'
 import type { AppExportData } from '~/types/meal'
 
 const mealStore = useMealStore()
 const { theme, setTheme } = useTheme()
+
+const todayPlannedKcal = computed(
+  () => calculateDayKcal({ dayPlan: mealStore.getDayPlan(getDayOfWeekFromDate(new Date())) }).totalKcal
+)
+
+const { openOnboarding, openMeasurement, openPlanScaling, openMenuGenerator, downloadMeasurementReminder } = useProfileUi()
+
+const profileSummary = computed(() => (mealStore.profile ? summarizeProfile(mealStore.profile) : null))
+const profileTiles = computed(() => {
+  const summary = profileSummary.value
+  if (!summary) return []
+  return [
+    { label: 'kg', value: summary.weightKg, icon: Scales, iconClass: 'text-[#8fb57a]' },
+    { label: `BMI · ${summary.bmiLabel}`, value: summary.bmi, icon: Heartbeat, iconClass: 'text-[#ab9cf0]' },
+    { label: 'kcal fabbisogno', value: summary.tdee, icon: Fire, iconClass: 'text-[#f2b36b]' },
+  ]
+})
+
+// "Seduto · 3 allenamenti/sett." (or the legacy generic activity level)
+const movementLabel = computed(() => {
+  const p = mealStore.profile
+  if (!p) return ''
+  if (!p.lifestyle) return ACTIVITY_LEVELS[p.activity ?? 'sedentary'].label
+  const n = p.workouts?.length ?? 0
+  return `${LIFESTYLES[p.lifestyle].label} · ${n} ${n === 1 ? 'allenamento' : 'allenamenti'}/sett.`
+})
+
+const measurementHistory = computed(() => [...(mealStore.profile?.measurements ?? [])].reverse())
+
+const formatDay = (dateKey: string) =>
+  parseDateKey(dateKey).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: '2-digit' })
+const formatDelta = (kg: number) => {
+  const rounded = Math.round(kg * 10) / 10
+  return `${rounded > 0 ? '+' : ''}${rounded}`
+}
+
+const useProfileGoal = () => {
+  if (!mealStore.profile) return
+  mealStore.saveProfile({ ...mealStore.profile, autoKcalGoal: true })
+}
+
+const onKcalGoalChange = (e: Event) => {
+  const value = Number((e.target as HTMLInputElement).value)
+  mealStore.setKcalGoal(Number.isFinite(value) && value > 0 ? value : null)
+}
 
 const themeOptions = [
   { value: 'light' as const, label: 'Chiaro', icon: Sun },

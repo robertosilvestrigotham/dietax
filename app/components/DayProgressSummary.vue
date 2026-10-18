@@ -38,8 +38,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useMealStore } from '~/stores/mealStore'
-import { getDayOfWeekFromDate } from '~/utils/date'
-import { calculateDayCho, calculatePlanAdherence } from '~/utils/nutrition'
+import { calculateDayCho, calculateDayKcal } from '~/utils/nutrition'
 import AppleActivityRings from '~/components/AppleActivityRings.vue'
 import ShaderBackground from '~/components/ShaderBackground.vue'
 
@@ -49,8 +48,7 @@ const props = defineProps<{
 
 const mealStore = useMealStore()
 
-const dayOfWeek = computed(() => getDayOfWeekFromDate(props.dateKey))
-const dayPlan = computed(() => mealStore.getDayPlan(dayOfWeek.value))
+const dayPlan = computed(() => mealStore.getDayPlanForDate(props.dateKey))
 const dayProgress = computed(() => mealStore.getDayProgressForDate(props.dateKey))
 
 const stats = computed(() => mealStore.getDayCompletionStats(props.dateKey))
@@ -67,24 +65,32 @@ const choPercentage = computed(() => {
   return Math.min(100, Math.round((dayCho.value.consumedCho / dayCho.value.totalCho) * 100))
 })
 
-const adherence = computed(() => {
-  return calculatePlanAdherence({
+const dayKcal = computed(() =>
+  calculateDayKcal({
     dayPlan: dayPlan.value,
     dayProgress: dayProgress.value,
   })
+)
+
+// Calorie goal: the one set in Opzioni, otherwise the planned calories of the day
+const kcalGoal = computed(() => mealStore.preferences.kcalGoal ?? dayKcal.value.totalKcal)
+
+const kcalPercentage = computed(() => {
+  if (!kcalGoal.value) return 0
+  return Math.min(100, Math.round((dayKcal.value.consumedKcal / kcalGoal.value) * 100))
 })
 
 // Pastel palette from the reference mockup
 const COLORS = {
   cho: '#8cc63f',
+  kcal: '#f2b36b',
   meals: '#ab9cf0',
-  adherence: '#8fc8f2',
 }
 
 const ringValues = computed(() => [
   { key: 'cho', pct: choPercentage.value, color: COLORS.cho },
+  { key: 'kcal', pct: kcalPercentage.value, color: COLORS.kcal },
   { key: 'meals', pct: stats.value.percentage, color: COLORS.meals },
-  { key: 'adherence', pct: adherence.value.adherencePercentage, color: COLORS.adherence },
 ])
 
 const goals = computed(() => [
@@ -96,22 +102,18 @@ const goals = computed(() => [
     value: `${Math.round(dayCho.value.consumedCho)}/${Math.round(dayCho.value.totalCho)}g`,
   },
   {
+    key: 'kcal',
+    label: 'Calorie',
+    color: COLORS.kcal,
+    pct: kcalPercentage.value,
+    value: `${dayKcal.value.consumedKcal}/${kcalGoal.value}`,
+  },
+  {
     key: 'meals',
     label: 'Pasti',
     color: COLORS.meals,
     pct: stats.value.percentage,
     value: `${stats.value.completed}/${stats.value.total}`,
-  },
-  {
-    key: 'adherence',
-    label: 'Aderenza',
-    color: COLORS.adherence,
-    pct: adherence.value.adherencePercentage,
-    value: adherence.value.hasExtras
-      ? `+${adherence.value.totalExtraCho}g`
-      : adherence.value.adherencePercentage < 100
-        ? 'Variato'
-        : 'OK',
   },
 ])
 </script>

@@ -39,6 +39,7 @@
           </div>
           <div class="text-xs mt-0.5 tabular-nums">
             <span class="font-semibold text-[#1f2421] dark:text-[#e6ebe7]">{{ mealCho.totalCho }}g CHO</span>
+            <span class="text-[#8a918c] dark:text-[#8e9790]"> · {{ mealKcal.totalKcal }} kcal</span>
             <span v-if="completedTimeFormatted" class="text-[#9aa19c] dark:text-[#7d867f]"> · alle {{ completedTimeFormatted }}</span>
           </div>
         </div>
@@ -122,6 +123,7 @@
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
               <span class="text-xs font-semibold tabular-nums" :class="tone.accent">+{{ extra.choGrams }}g</span>
+              <span class="text-[11px] tabular-nums" :class="tone.muted">{{ calculateExtraKcal(extra) }} kcal</span>
               <button
                 v-if="!isLocked"
                 type="button"
@@ -176,42 +178,28 @@
               :key="p.label"
               type="button"
               @click="applyPreset(p)"
-              class="text-xs px-2.5 py-1 rounded-full bg-[#f3f4f3] dark:bg-[#1b211d] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c9d1cb] transition"
+              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c9d1cb] transition"
             >
               {{ p.label }} <span class="font-semibold text-[#4c8a17] dark:text-[#a0da6c]">+{{ p.cho }}g</span>
             </button>
           </div>
 
-          <form @submit.prevent="saveExtra" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <input
+          <form @submit.prevent="saveExtra" class="space-y-2">
+            <FoodSearchInput
               ref="extraNameInput"
-              type="text"
-              v-model="newExtraName"
-              placeholder="Alimento"
-              class="w-full text-xs px-3 py-2 rounded-xl bg-[#f3f4f3] dark:bg-[#1b211d] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]"
+              v-model="extraEntry.name.value"
+              placeholder="Cerca alimento o scrivi"
+              input-class="ui-input text-xs"
+              @select="extraEntry.selectFood"
             />
-            <input
-              type="text"
-              v-model="newExtraQty"
-              placeholder="Quantità (es. 50g)"
-              class="w-full text-xs px-3 py-2 rounded-xl bg-[#f3f4f3] dark:bg-[#1b211d] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]"
-            />
-            <div class="flex items-center gap-1.5">
-              <input
-                type="number"
-                v-model.number="newExtraCho"
-                min="0"
-                max="500"
-                placeholder="g CHO"
-                class="w-full text-xs px-3 py-2 rounded-xl bg-[#f3f4f3] dark:bg-[#1b211d] text-[#1f2421] dark:text-white placeholder:text-[#9aa19c] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]"
-              />
-              <button
-                type="submit"
-                class="px-3.5 py-2 rounded-xl font-semibold text-xs flex-shrink-0 bg-[#8cc63f] hover:bg-[#7db536] text-white transition"
-              >
-                {{ editingExtraId ? 'Salva' : 'Aggiungi' }}
-              </button>
-            </div>
+            <FoodAmountFields :entry="extraEntry" />
+            <button
+              type="submit"
+              :disabled="!extraEntry.name.value.trim() || extraEntry.cho.value === null"
+              class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#8cc63f] hover:bg-[#7db536] text-white transition disabled:opacity-40"
+            >
+              {{ editingExtraId ? 'Salva' : 'Aggiungi' }}
+            </button>
           </form>
 
           <button
@@ -237,30 +225,33 @@
               Chiudi
             </button>
           </div>
-          <input
-            ref="replacementInput"
-            type="text"
-            v-model="replacementDescription"
-            placeholder="Es. Canederlo in brodo"
-            class="ui-input text-xs"
-          />
-          <div class="flex items-center gap-2">
-            <input
-              type="number"
-              v-model.number="replacementCho"
-              min="0"
-              max="500"
-              placeholder="g CHO"
-              class="ui-input text-xs"
-            />
+          <!-- Ideas with the same calories and CHO as the planned meal -->
+          <div v-if="replacementIdeas.length" class="flex flex-wrap gap-1.5">
             <button
-              type="submit"
-              :disabled="!replacementDescription.trim() || replacementCho === null"
-              class="px-4 py-2.5 rounded-xl font-semibold text-xs flex-shrink-0 bg-[#8cc63f] hover:bg-[#7db536] text-white transition disabled:opacity-40"
+              v-for="idea in replacementIdeas"
+              :key="idea.dish.id"
+              type="button"
+              @click="useIdeaAsReplacement(idea)"
+              class="text-xs px-2.5 py-1 rounded-full bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] text-[#4a524c] dark:text-[#c9d1cb] transition text-left"
             >
-              Sostituisci
+              {{ idea.dish.name }} <span class="tabular-nums text-[#8a918c]">· {{ idea.kcal }} kcal</span>
             </button>
           </div>
+          <FoodSearchInput
+            ref="replacementInput"
+            v-model="replacementEntry.name.value"
+            placeholder="Es. Canederlo"
+            input-class="ui-input text-xs"
+            @select="replacementEntry.selectFood"
+          />
+          <FoodAmountFields :entry="replacementEntry" />
+          <button
+            type="submit"
+            :disabled="!replacementEntry.name.value.trim() || replacementEntry.cho.value === null"
+            class="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#8cc63f] hover:bg-[#7db536] text-white transition disabled:opacity-40"
+          >
+            Sostituisci
+          </button>
           <button
             v-if="replacement"
             type="button"
@@ -272,8 +263,48 @@
           </button>
         </form>
 
-        <!-- Bottom-right: replace for this date + edit meal template -->
+        <!-- Plan mode: swap the dish with one of similar calories/CHO -->
+        <div v-if="isSwappingDish" class="mt-3 p-3 rounded-xl bg-white dark:bg-[#232a25] space-y-1.5">
+          <div class="flex items-center justify-between pb-1">
+            <span class="text-xs font-semibold text-[#1f2421] dark:text-white">Stesse calorie, piatto diverso</span>
+            <button type="button" @click="isSwappingDish = false" class="text-xs text-[#8a918c] hover:text-[#1f2421] dark:hover:text-white">
+              Chiudi
+            </button>
+          </div>
+          <button
+            v-for="option in dishOptions"
+            :key="option.dish.id"
+            type="button"
+            @click="swapDish(option)"
+            class="w-full px-3 py-2 rounded-xl bg-[#f1f4ef] dark:bg-[#1b211d] hover:bg-[#e6f3d6] dark:hover:bg-[#1f2c1f] transition text-left flex items-center justify-between gap-2"
+          >
+            <span class="min-w-0">
+              <span class="block text-xs font-medium text-[#1f2421] dark:text-white truncate">{{ option.dish.name }}</span>
+              <span class="block text-[11px] text-[#8a918c] truncate">
+                {{ option.meal.ingredients.map((i) => `${i.name} ${formatIngredientQuantity(i)}`).join(' · ') }}
+              </span>
+            </span>
+            <span class="text-[11px] tabular-nums text-[#8a918c] flex-shrink-0">{{ option.kcal }} kcal · {{ Math.round(option.cho) }}g</span>
+          </button>
+          <button type="button" @click="moreDishOptions" class="w-full py-1.5 text-xs font-medium text-[#5f8a3a] dark:text-[#a7c49a] flex items-center justify-center gap-1">
+            <ArrowsClockwise class="w-3.5 h-3.5" />
+            Altre idee
+          </button>
+        </div>
+
+        <!-- Bottom-right: replace for this date / swap dish in the plan + edit meal template -->
         <div v-if="canReplace || canEdit" class="flex justify-end gap-1 mt-2 -mb-1 -mr-1">
+          <button
+            v-if="planMode && canEdit"
+            type="button"
+            @click="toggleDishSwap"
+            class="w-8 h-8 rounded-full flex items-center justify-center transition"
+            :class="tone.ghost"
+            title="Cambia piatto"
+            aria-label="Cambia piatto"
+          >
+            <ArrowsClockwise class="w-4 h-4" />
+          </button>
           <button
             v-if="canReplace"
             type="button"
@@ -313,6 +344,7 @@ import {
   PhTrash as Trash2,
   PhSwap as Swap,
   PhArrowCounterClockwise as ArrowCounterClockwise,
+  PhArrowsClockwise as ArrowsClockwise,
 } from '@phosphor-icons/vue'
 import type { DayOfWeek, ExtraFoodItem, Ingredient, Meal, MealSlot } from '~/types/meal'
 import { MEAL_SLOT_LABELS } from '~/types/meal'
@@ -320,7 +352,12 @@ import { useMealStore } from '~/stores/mealStore'
 import { formatQuantityString } from '~/utils/grocery'
 import { formatDateKey } from '~/utils/date'
 import { MEAL_SLOT_ICONS } from '~/utils/mealIcons'
-import { calculateMealCho } from '~/utils/nutrition'
+import { calculateMealCho, calculateMealKcal, calculateExtraKcal } from '~/utils/nutrition'
+import { findFoodById, foodNutrition } from '~/data/foods'
+import { useFoodEntry } from '~/composables/useFoodEntry'
+import { suggestDishes, type FittedDish } from '~/utils/menuGenerator'
+import FoodSearchInput from '~/components/FoodSearchInput.vue'
+import FoodAmountFields from '~/components/FoodAmountFields.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -349,60 +386,63 @@ const mealStore = useMealStore()
 
 const isAddingExtra = ref(false)
 const editingExtraId = ref<string | null>(null)
-const extraNameInput = ref<HTMLInputElement | null>(null)
-const newExtraName = ref('')
-const newExtraQty = ref('')
-const newExtraCho = ref<number | null>(null)
+const extraNameInput = ref<{ focus: () => void } | null>(null)
+const extraEntry = useFoodEntry()
 
-// Common quick presets for fast logging
-const QUICK_PRESETS = [
-  { label: 'Pane (30g)', name: 'Pane integrale', qty: '30g', cho: 15 },
-  { label: 'Mela / Pera (1 pz)', name: 'Mela fresca', qty: '1 pz', cho: 18 },
-  { label: 'Banana (1 pz)', name: 'Banana piccola', qty: '1 pz', cho: 23 },
-  { label: 'Biscotti (2 pz)', name: 'Biscotti frollini', qty: '20g', cho: 15 },
-  { label: 'Cioccolato fondente', name: 'Cioccolato 85%', qty: '15g', cho: 7 },
-  { label: 'Fette biscottate (2 pz)', name: 'Fette biscottate', qty: '2 pz', cho: 15 },
-]
+// Quick presets from the food table
+const QUICK_PRESETS = (
+  [
+    ['pane-integrale', 30],
+    ['mela', 1],
+    ['banana', 1],
+    ['biscotti-frollini', 20],
+    ['cioccolato-fondente', 15],
+    ['fette-biscottate', 20],
+  ] as const
+).flatMap(([id, quantity]) => {
+  const food = findFoodById(id)
+  if (!food) return []
+  const { cho, kcal } = foodNutrition(food, quantity)
+  const amount = food.unit === 'pz' ? `${quantity} pz` : `${quantity}${food.unit}`
+  return [{ label: `${food.name} ${amount}`, name: food.name, quantity, unit: food.unit, cho, kcal }]
+})
 
-const applyPreset = (preset: typeof QUICK_PRESETS[0]) => {
+const applyPreset = (preset: (typeof QUICK_PRESETS)[number]) => {
   mealStore.addExtraFood(props.dateKey, props.meal.slot, {
     name: preset.name,
-    quantity: 1,
-    unit: 'pz',
+    quantity: preset.quantity,
+    unit: preset.unit,
     choGrams: preset.cho,
+    kcal: preset.kcal,
   })
 }
 
 const startEditExtra = (extra: ExtraFoodItem) => {
   isReplacing.value = false
   editingExtraId.value = extra.id
-  newExtraName.value = extra.name
-  newExtraQty.value = extra.quantity ? `${extra.quantity}${extra.unit || 'g'}` : ''
-  newExtraCho.value = extra.choGrams
-  isAddingExtra.value = true
-  nextTick(() => {
-    extraNameInput.value?.focus()
+  extraEntry.reset({
+    name: extra.name,
+    quantity: extra.quantity ?? null,
+    unit: extra.unit,
+    cho: extra.choGrams,
+    kcal: calculateExtraKcal(extra),
   })
+  isAddingExtra.value = true
+  nextTick(() => extraNameInput.value?.focus())
 }
 
 const cancelEditExtra = () => {
   editingExtraId.value = null
-  newExtraName.value = ''
-  newExtraQty.value = ''
-  newExtraCho.value = null
+  extraEntry.reset()
   isAddingExtra.value = false
 }
 
 const openAddExtra = () => {
   isReplacing.value = false
   editingExtraId.value = null
-  newExtraName.value = ''
-  newExtraQty.value = ''
-  newExtraCho.value = null
+  extraEntry.reset()
   isAddingExtra.value = true
-  nextTick(() => {
-    extraNameInput.value?.focus()
-  })
+  nextTick(() => extraNameInput.value?.focus())
 }
 
 const toggleAddExtra = () => {
@@ -414,25 +454,20 @@ const toggleAddExtra = () => {
 }
 
 const saveExtra = () => {
-  if (!newExtraName.value.trim() || newExtraCho.value === null) return
+  const { name, quantity, unit, cho, kcal } = extraEntry
+  if (!name.value.trim() || cho.value === null) return
 
-  const parsedQty = newExtraQty.value
-    ? Number(newExtraQty.value.replace(/[^0-9.]/g, '')) || null
-    : null
-
+  const data = {
+    name: name.value.trim(),
+    quantity: quantity.value,
+    unit: unit.value,
+    choGrams: Number(cho.value) || 0,
+    kcal: kcal.value === null ? undefined : Number(kcal.value) || 0,
+  }
   if (editingExtraId.value) {
-    mealStore.updateExtraFood(props.dateKey, props.meal.slot, editingExtraId.value, {
-      name: newExtraName.value.trim(),
-      quantity: parsedQty,
-      choGrams: Number(newExtraCho.value) || 0,
-    })
+    mealStore.updateExtraFood(props.dateKey, props.meal.slot, editingExtraId.value, data)
   } else {
-    mealStore.addExtraFood(props.dateKey, props.meal.slot, {
-      name: newExtraName.value.trim(),
-      quantity: parsedQty,
-      unit: 'g',
-      choGrams: Number(newExtraCho.value) || 0,
-    })
+    mealStore.addExtraFood(props.dateKey, props.meal.slot, data)
   }
 
   cancelEditExtra()
@@ -532,6 +567,15 @@ const mealCho = computed(() => {
   })
 })
 
+const mealKcal = computed(() =>
+  calculateMealKcal({
+    meal: props.meal,
+    selectedAlternativeId: activeAlternativeId.value,
+    extraFoods: extraFoodsList.value,
+    replacement: replacement.value,
+  })
+)
+
 // Day-specific replacement of the whole meal (the weekly plan is untouched)
 const replacement = computed(() => {
   if (props.planMode) return undefined
@@ -540,14 +584,16 @@ const replacement = computed(() => {
 
 const canReplace = computed(() => !props.planMode && !isLocked.value)
 const isReplacing = ref(false)
-const replacementInput = ref<HTMLInputElement | null>(null)
-const replacementDescription = ref('')
-const replacementCho = ref<number | null>(null)
+const replacementInput = ref<{ focus: () => void } | null>(null)
+const replacementEntry = useFoodEntry()
 
 const openReplacement = () => {
   cancelEditExtra()
-  replacementDescription.value = replacement.value?.description ?? ''
-  replacementCho.value = replacement.value?.choGrams ?? null
+  replacementEntry.reset({
+    name: replacement.value?.description,
+    cho: replacement.value?.choGrams ?? null,
+    kcal: replacement.value?.kcal ?? null,
+  })
   isReplacing.value = true
   nextTick(() => replacementInput.value?.focus())
 }
@@ -562,12 +608,72 @@ const toggleReplacement = () => {
 }
 
 const saveReplacement = () => {
-  if (!replacementDescription.value.trim() || replacementCho.value === null) return
+  const { name, food, quantity, unit, cho, kcal } = replacementEntry
+  if (!name.value.trim() || cho.value === null) return
+  // Keep the amount in the description when it came from the food table (e.g. "Canederlo · 2 pz")
+  const amount =
+    food.value && quantity.value ? ` · ${quantity.value}${unit.value === 'pz' ? ' pz' : unit.value}` : ''
   mealStore.setMealReplacement(props.dateKey, props.meal.slot, {
-    description: replacementDescription.value.trim(),
-    choGrams: Number(replacementCho.value) || 0,
+    description: `${name.value.trim()}${amount}`,
+    choGrams: Number(cho.value) || 0,
+    kcal: kcal.value === null ? undefined : Number(kcal.value) || 0,
   })
   closeReplacement()
+}
+
+// ─── Dish ideas from the library (same calories and CHO as the planned meal) ──
+const plannedTarget = () => ({
+  kcal: calculateMealKcal({ meal: props.meal, selectedAlternativeId: activeAlternativeId.value }).baseKcal,
+  cho: calculateMealCho({ meal: props.meal, selectedAlternativeId: activeAlternativeId.value }).baseCho,
+})
+
+const ideasFor = (count: number, skip: string[] = []) =>
+  suggestDishes({
+    slot: props.meal.slot,
+    target: plannedTarget(),
+    excludedFoods: mealStore.preferences.excludedFoods ?? [],
+    excludeDishId: props.meal.dishId,
+    count: count + skip.length,
+    mealId: props.meal.id,
+  }).filter((f) => !skip.includes(f.dish.id)).slice(0, count)
+
+const replacementIdeas = computed(() => (isReplacing.value && !props.meal.isOut ? ideasFor(3) : []))
+
+const useIdeaAsReplacement = (idea: FittedDish) => {
+  replacementEntry.reset({ name: idea.dish.name, cho: idea.cho, kcal: idea.kcal })
+}
+
+const isSwappingDish = ref(false)
+const dishOptions = ref<FittedDish[]>([])
+const shownDishIds = ref<string[]>([])
+
+const toggleDishSwap = () => {
+  isSwappingDish.value = !isSwappingDish.value
+  if (isSwappingDish.value) {
+    dishOptions.value = ideasFor(4)
+    shownDishIds.value = dishOptions.value.map((o) => o.dish.id)
+  }
+}
+
+const moreDishOptions = () => {
+  const next = ideasFor(4, shownDishIds.value)
+  // Library exhausted: start over
+  dishOptions.value = next.length ? next : ideasFor(4)
+  shownDishIds.value = next.length ? [...shownDishIds.value, ...next.map((o) => o.dish.id)] : dishOptions.value.map((o) => o.dish.id)
+}
+
+const swapDish = (option: FittedDish) => {
+  if (!props.dayOfWeek) return
+  mealStore.updateMeal(props.dayOfWeek, props.meal.slot, {
+    ...option.meal,
+    id: props.meal.id,
+    notes: undefined,
+    alternatives: undefined,
+    selectedAlternativeId: undefined,
+    estimatedCho: undefined,
+    estimatedKcal: undefined,
+  })
+  isSwappingDish.value = false
 }
 
 const restorePlannedMeal = () => {

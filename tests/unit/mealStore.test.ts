@@ -114,4 +114,27 @@ describe('mealStore', () => {
     store.removeExtraFood(testDate, 'lunch', extra.id)
     expect(store.progress[testDate].extraFoods?.lunch?.length).toBe(0)
   })
+
+  it('keeps confirmed meals frozen when the plan changes, and can undo a plan change', () => {
+    const store = useMealStore()
+    const date = '2026-10-12' // Monday
+    const originalLunch = JSON.stringify(store.plan.monday.lunch)
+
+    store.toggleMealCompleted(date, 'lunch')
+
+    const scaled = JSON.parse(JSON.stringify(store.plan))
+    scaled.monday.lunch.description = 'Pranzo ridotto'
+    scaled.monday.dinner.description = 'Cena ridotta'
+    store.applyPlan(scaled)
+
+    const dated = store.getDayPlanForDate(date)
+    // Confirmed lunch: the copy taken at confirmation
+    expect(JSON.stringify(dated.lunch)).toBe(originalLunch)
+    // Not confirmed: follows the new plan
+    expect(dated.dinner.description).toBe('Cena ridotta')
+
+    store.restorePlanBackup()
+    expect(store.plan.monday.dinner.description).not.toBe('Cena ridotta')
+    expect(store.planBackup).toBeNull()
+  })
 })
